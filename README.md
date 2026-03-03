@@ -15,6 +15,7 @@ A content marketing and SEO agency workspace powered by [Claude Code](https://cl
 You also need:
 - [Git](https://git-scm.com/) installed
 - [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) installed and authenticated
+- **GitHub access** to both this repo and [prosperity-skills](https://github.com/reapzyau/prosperity-skills) (both are private — you must be added as a collaborator on each)
 
 ## Quick Start
 
@@ -76,6 +77,14 @@ git submodule update --remote prosperity-skills
 git add prosperity-skills
 git commit -m "Update prosperity-skills to latest"
 ```
+
+## How prosperity-skills Works (Submodule)
+
+`prosperity-skills` is included as a **git submodule** — a repo-inside-a-repo. You don't need to clone it separately.
+
+- **When you clone with `--recurse-submodules`**, git automatically pulls `prosperity-skills` into the `prosperity-skills/` folder. One command, both repos.
+- **If you forget `--recurse-submodules`**, the `prosperity-skills/` folder will exist but be empty. Run `bash setup.sh` or `git submodule update --init --recursive` to fix it.
+- **Access requirement:** Since both repos are private, you need collaborator access to **both** `prosperity-brain-template` and `prosperity-skills`. If you can clone the template but the submodule fails with a permission error, ask to be added to the `prosperity-skills` repo.
 
 ## Conventions
 
