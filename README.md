@@ -26,8 +26,12 @@ git clone --recurse-submodules https://github.com/reapzyau/prosperity-brain-temp
 # 2. Run setup (installs skills into Claude Code)
 cd my-workspace && bash setup.sh
 
-# 3. Open Claude Code and onboard your first client
-# Run /pm-new-project inside Claude Code
+# 3. Open Claude Code and set up your workspace
+claude
+
+# 4. Inside Claude Code — onboard yourself first, then your first client
+# Run /pm-onboard to create your personal folder (SOPs, tasks, notes)
+# Run /pm-new-project to onboard your first client
 ```
 
 ## Workspace Structure
@@ -90,49 +94,6 @@ git commit -m "Update prosperity-skills to latest"
 - **When you clone with `--recurse-submodules`**, git automatically pulls `prosperity-skills` into the `prosperity-skills/` folder. One command, both repos.
 - **If you forget `--recurse-submodules`**, the `prosperity-skills/` folder will exist but be empty. Run `bash setup.sh` or `git submodule update --init --recursive` to fix it.
 - **Access requirement:** Since both repos are private, you need collaborator access to **both** `prosperity-brain-template` and `prosperity-skills`. If you can clone the template but the submodule fails with a permission error, ask to be added to the `prosperity-skills` repo.
-
-## Google Analytics MCP Server (Optional)
-
-To pull Google Analytics data directly into Claude Code, install the [Google Analytics MCP server](https://github.com/googleanalytics/google-analytics-mcp):
-
-### 1. Install prerequisites
-
-```bash
-# Install pipx (if not already installed)
-pip install pipx
-pipx ensurepath
-
-# Install the Google Analytics MCP package
-pipx install analytics-mcp
-
-# Install Google Cloud SDK (if not already installed)
-# Download from https://cloud.google.com/sdk/docs/install or:
-curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86_64.tar.gz
-tar -xf google-cloud-cli-linux-x86_64.tar.gz
-./google-cloud-sdk/install.sh
-```
-
-### 2. Authenticate with Google
-
-```bash
-gcloud auth application-default login
-```
-
-This opens a browser to authenticate with your Google account. You must have access to the Google Analytics property you want to query.
-
-### 3. Add the MCP server to Claude Code
-
-```bash
-claude mcp add google-analytics -- analytics-mcp \
-  -s project \
-  --env GOOGLE_PROJECT_ID="your-google-cloud-project-id"
-```
-
-Replace `your-google-cloud-project-id` with your actual Google Cloud project ID.
-
-### 4. Restart Claude Code
-
-Restart your Claude Code session for the MCP server to become available. You can then query GA4 data directly from within Claude Code.
 
 ## Conventions
 
