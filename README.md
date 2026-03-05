@@ -6,7 +6,7 @@ A content marketing and SEO agency workspace powered by [Claude Code](https://cl
 
 ## Prerequisites
 
-> **CRITICAL: This workspace requires [prosperity-skills](https://github.com/reapzyau/prosperity-skills) to function.**
+> **CRITICAL: This workspace requires [prosperity-skills](https://github.com/reapzyau/pm-skills) to function.**
 >
 > Without it, slash commands (`/pm-new-project`, `/pm-codify`, `/pm-generate-content-brief`, `/pm-reporting`, `/pm-generate-pinterest`, `/pm-generate-optimisation-brief`, `/pm-onboard`, `/pm-skill-creator`) will not work and you'll lose the majority of the automation this system provides.
 >
@@ -15,13 +15,13 @@ A content marketing and SEO agency workspace powered by [Claude Code](https://cl
 You also need:
 - [Git](https://git-scm.com/) installed
 - [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) installed and authenticated
-- **GitHub access** to both this repo and [prosperity-skills](https://github.com/reapzyau/prosperity-skills) (both are private — you must be added as a collaborator on each)
+- **GitHub access** to both this repo and [prosperity-skills](https://github.com/reapzyau/pm-skills) (both are private — you must be added as a collaborator on each)
 
 ## Quick Start
 
 ```bash
 # 1. Clone with submodules (critical — don't skip --recurse-submodules)
-git clone --recurse-submodules https://github.com/reapzyau/prosperity-brain-template.git my-workspace
+git clone --recurse-submodules https://github.com/reapzyau/pm-brain-template.git my-workspace
 
 # 2. Run setup (installs skills into Claude Code)
 cd my-workspace && bash setup.sh
