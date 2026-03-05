@@ -42,5 +42,6 @@ ls -d ~/.claude/skills/pm-* 2>/dev/null | xargs -I{} basename {} || echo "  (non
 echo ""
 echo "Next steps:"
 echo "  1. Open Claude Code in this directory"
-echo "  2. Run /pm-new-project to onboard your first client"
-echo "  3. Or manually create a client folder following _example-client/"
+echo "  2. Run /pm-onboard to set up your personal workspace"
+echo "  3. Run /pm-new-project to onboard your first client"
+echo "  4. Or manually create a client folder following _example-client/"
