@@ -8,7 +8,7 @@ A content marketing and SEO agency workspace powered by [Claude Code](https://cl
 
 > **CRITICAL: This workspace requires [prosperity-skills](https://github.com/reapzyau/prosperity-skills) to function.**
 >
-> Without it, slash commands (`/pm-new-project`, `/pm-codify`, `/pm-generate-content-brief`, `/pm-reporting`) will not work and you'll lose the majority of the automation this system provides.
+> Without it, slash commands (`/pm-new-project`, `/pm-codify`, `/pm-generate-content-brief`, `/pm-reporting`, `/pm-generate-pinterest`, `/pm-generate-optimisation-brief`, `/pm-onboard`, `/pm-skill-creator`) will not work and you'll lose the majority of the automation this system provides.
 >
 > The skills are included as a git submodule. Always clone with `--recurse-submodules` (see Quick Start below).
 
@@ -47,7 +47,8 @@ my-workspace/
 │   ├── content/               ← Content briefs by year/month
 │   ├── seo/                   ← SEO deliverables (content/, technical/, ad-hoc/)
 │   ├── research/              ← Client-specific research
-│   └── reporting/             ← Monthly reports, QBRs
+│   ├── reporting/             ← Monthly reports, QBRs
+│   └── pinterest/             ← Pinterest pin generation output
 └── <your-clients>/            ← Created by /pm-new-project
 ```
 
@@ -57,10 +58,14 @@ Custom Claude Code skills included via the `prosperity-skills/` submodule.
 
 | Skill | Trigger | Purpose |
 |-------|---------|---------|
+| `pm-onboard` | `/pm-onboard` | Scaffold a personal team member folder with guided walkthrough |
 | `pm-new-project` | `/pm-new-project` | Onboard a new client — guided walkthrough, website scrape, generates full folder structure and docs |
 | `pm-generate-content-brief` | `/pm-generate-content-brief` | Generate SEO content briefs as DOCX files |
 | `pm-codify` | `/pm-codify` | Convert client documents (PDF, DOCX, etc.) to markdown and file them |
 | `pm-reporting` | `/pm-reporting` | Generate monthly SEO performance report emails |
+| `pm-generate-pinterest` | `/pm-generate-pinterest` | Generate Pinterest-optimised pin images at scale with Gemini |
+| `pm-generate-optimisation-brief` | `/pm-generate-optimisation-brief` | Generate SEO optimisation briefs with inline comments for existing content |
+| `pm-skill-creator` | `/pm-skill-creator` | Create new Prosperity skills with validated structure and best-practice compliance |
 
 ## Adding a New Client
 
