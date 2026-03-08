@@ -202,10 +202,10 @@ These skills automate common Prosperity workflows. They are bundled in `prosperi
 |-------|---------|--------------|
 | `pm-onboard` | `/pm-onboard` or "onboard me", "set up my workspace" | Scaffold a personal team member folder with guided walkthrough |
 | `pm-new-project` | `/pm-new-project` or "new client", "new project" | Onboard a new client — scrapes website, runs discovery, creates full folder structure |
-| `pm-generate-content-brief` | `/pm-generate-content-brief` or "content brief", "new brief" | Generate SEO content briefs as formatted DOCX files |
-| `pm-codify` | `/pm-codify` or "codify", "convert this", "process this document" | Convert client documents (PDFs, DOCXs, emails) to clean markdown |
-| `pm-reporting` | `/pm-reporting` or "monthly report", "SEO report" | Generate monthly SEO performance report emails |
-| `pm-generate-pinterest` | `/pm-generate-pinterest` or "generate pins", "pinterest batch" | Generate Pinterest-optimised pin images at scale with Gemini |
+| `pm-generate-content-brief` | `/pm-generate-content-brief` or "content brief", "new brief", "SEO brief", "article brief", "blog brief" | Generate SEO content briefs as formatted DOCX files |
+| `pm-codify` | `/pm-codify` or "codify", "convert this", "file this", "import this", "save this document" | Convert client documents (PDFs, DOCXs, emails) to clean markdown |
+| `pm-reporting` | `/pm-reporting` or "monthly report", "SEO report" | Generate monthly SEO performance report emails (reads client report prompt, no hardcoded data) |
+| `pm-generate-pinterest` | `/pm-generate-pinterest` or "generate pins", "pinterest batch", "pinterest seo", "pin image" | Generate Pinterest-optimised pin images at scale with Gemini |
 | `pm-generate-optimisation-brief` | `/pm-generate-optimisation-brief` or "optimisation brief", "optimise content" | Generate SEO optimisation briefs with inline comments for existing content |
 | `pm-skill-creator` | `/pm-skill-creator` or "create a skill", "new skill", "build a skill" | Create new Prosperity skills with validated structure and Anthropic best-practice compliance |
 
@@ -281,3 +281,7 @@ These are agency-wide workflow rules sourced from Claude Code best practices. Fo
 - All research documents must include the current date at the top in DD/MM/YYYY format and in the file name as a prefix (e.g., `DD-MM-YYYY-research-topic.md`)
 - When building a Claude skill, always reference `.prosperity-brain/research/03-03-2026-claude-skill-creator-guide.md` to follow best practices
 - **Internal links in content briefs must be verified against the client's live sitemap.xml** before inclusion. Never hallucinate URLs. For each client, maintain a sitemap URL reference file at `<client>/seo/content/DD-MM-YYYY-<client>-sitemap-urls.md`. Scrape the sitemap fresh if the reference file is older than 30 days.
+- **Skills use agent specs** — skills with complex workflows store agent instructions in `<skill>/agents/*.md` and spawn them via the Task tool. Agent specs are self-contained so subagents can run independently.
+- **Skills use shared toolchain references** — common toolchain docs live in `prosperity-skills/_shared/` (ahrefs, thruuu, sitemap). Skills reference these instead of duplicating content.
+- **SKILL.md line limit is 500** — extract detailed reference material to `<skill>/references/` to keep SKILL.md focused and under the limit.
+- **Never hardcode client data in skills** — client names, dashboard URLs, contacts, and metric tables must be read from each client's CLAUDE.md or report prompt file at runtime.
