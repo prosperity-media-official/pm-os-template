@@ -208,6 +208,10 @@ These skills automate common Prosperity workflows. They are bundled in `prosperi
 | `pm-generate-pinterest` | `/pm-generate-pinterest` or "generate pins", "pinterest batch", "pinterest seo", "pin image" | Generate Pinterest-optimised pin images at scale with Gemini |
 | `pm-generate-optimisation-brief` | `/pm-generate-optimisation-brief` or "optimisation brief", "optimise content" | Generate SEO optimisation briefs with inline comments for existing content |
 | `pm-skill-creator` | `/pm-skill-creator` or "create a skill", "new skill", "build a skill" | Create new Prosperity skills with validated structure and Anthropic best-practice compliance |
+| `pm-meeting-summariser` | `/pm-meeting-summariser` or "summarise meeting", "meeting notes", "meeting summary" | Summarise meeting transcripts into structured notes and create Asana tasks from action items |
+| `pm-start` | `/pm-start` or "start", "initialise workspace" | Initialise or update the Prosperity Brain workspace — symlink skills, verify structure, run health checks |
+
+**Skill library:** See `prosperity-skills/SKILL-LIBRARY.md` for planned skills not yet built.
 
 **First-time setup:** Run `bash setup.sh` from the workspace root to symlink all skills into `~/.claude/skills/`.
 
