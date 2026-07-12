@@ -12,7 +12,10 @@ $required = @(
     'README.md',
     'setup.ps1',
     'setup.sh',
+    'dependencies.json',
     'skills-lock.json',
+    'scripts/bootstrap-dependencies.ps1',
+    'scripts/bootstrap-dependencies.sh',
     '.claude/rules/content-rules.md',
     '.claude/rules/geo-rules.md',
     'clients/_example-client/AGENTS.md',
@@ -31,7 +34,8 @@ foreach ($path in $required) {
     }
 }
 
-foreach ($json in @('skills-lock.json', '.obsidian/app.json', '.obsidian/appearance.json', '.obsidian/core-plugins.json', '.obsidian/community-plugins.json')) {
+$jsonFiles = @('dependencies.json', 'skills-lock.json', '.obsidian/app.json', '.obsidian/appearance.json', '.obsidian/core-plugins.json', '.obsidian/community-plugins.json')
+foreach ($json in $jsonFiles) {
     try { Get-Content -LiteralPath (Join-Path $Root $json) -Raw | ConvertFrom-Json | Out-Null }
     catch { $failures.Add("Invalid JSON: $json") }
 }
@@ -65,4 +69,4 @@ if ($failures.Count -gt 0) {
     exit 1
 }
 
-Write-Host "Template verification passed ($($required.Count) required paths, 5 JSON files, no legacy submodule references)."
+Write-Host "Template verification passed ($($required.Count) required paths, $($jsonFiles.Count) JSON files, no legacy submodule references)."

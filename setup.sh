@@ -6,22 +6,28 @@ SKILLS_DIR="${PM_SKILLS_DIR:-$(dirname "$WORKSPACE_ROOT")/pm-skills}"
 SKILLS_REPO="${PM_SKILLS_REPO:-https://github.com/prosperity-media-official/pm-skills.git}"
 UPDATE=0
 CHECK_ONLY=0
+SKIP_DEPENDENCIES=0
 
 usage() {
-  printf 'Usage: bash setup.sh [--update] [--check] [--skills-dir PATH]\n'
+  printf 'Usage: bash setup.sh [--update] [--check] [--skip-dependencies] [--skills-dir PATH]\n'
 }
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --update) UPDATE=1; shift ;;
     --check) CHECK_ONLY=1; shift ;;
+    --skip-dependencies) SKIP_DEPENDENCIES=1; shift ;;
     --skills-dir) SKILLS_DIR="${2:?--skills-dir requires a path}"; shift 2 ;;
     -h|--help) usage; exit 0 ;;
     *) printf 'Unknown option: %s\n' "$1" >&2; usage >&2; exit 2 ;;
   esac
 done
 
-command -v git >/dev/null 2>&1 || { printf 'ERROR: Git is required.\n' >&2; exit 1; }
+if ! command -v git >/dev/null 2>&1; then
+  [[ "$SKIP_DEPENDENCIES" -eq 1 ]] && { printf 'ERROR: Git is required. Rerun without --skip-dependencies to install it automatically.\n' >&2; exit 1; }
+  if [[ "$CHECK_ONLY" -eq 1 ]]; then bash "$WORKSPACE_ROOT/scripts/bootstrap-dependencies.sh" "$SKILLS_DIR" --check
+  else bash "$WORKSPACE_ROOT/scripts/bootstrap-dependencies.sh" "$SKILLS_DIR"; fi
+fi
 
 for required in AGENTS.md CLAUDE.md clients team agency knowledge; do
   [[ -e "$WORKSPACE_ROOT/$required" ]] || { printf 'ERROR: Workspace is missing required path: %s\n' "$required" >&2; exit 1; }
@@ -40,6 +46,11 @@ elif [[ "$UPDATE" -eq 1 ]]; then
   else
     git -C "$SKILLS_DIR" pull --ff-only
   fi
+fi
+
+if [[ "$SKIP_DEPENDENCIES" -eq 0 ]]; then
+  if [[ "$CHECK_ONLY" -eq 1 ]]; then bash "$WORKSPACE_ROOT/scripts/bootstrap-dependencies.sh" "$SKILLS_DIR" --check
+  else bash "$WORKSPACE_ROOT/scripts/bootstrap-dependencies.sh" "$SKILLS_DIR"; fi
 fi
 
 SKILLS_DIR="$(cd "$SKILLS_DIR" && pwd -P)"
@@ -87,12 +98,12 @@ done
 if [[ "$CHECK_ONLY" -eq 0 ]]; then
   printf '\nInstalled %s entries into both ~/.claude/skills and ~/.codex/skills.\n' "${#SKILL_SOURCES[@]}"
   printf 'Workspace: %s\nSkills:    %s\n' "$WORKSPACE_ROOT" "$SKILLS_DIR"
-  printf 'Restart Codex/Claude Code, then run /pm-onboard.\n'
+  printf 'Restart Codex/Claude Code, then run /pm-start and /pm-onboard.\n'
 else
   printf 'OK: %s skill entries verified in both runtimes.\n' "${#SKILL_SOURCES[@]}"
 fi
 
-for runtime in python3 node bun bash; do
+for runtime in git gh python3 node npm bun bash; do
   if command -v "$runtime" >/dev/null 2>&1; then
     printf '  optional runtime: %-7s found\n' "$runtime"
   else

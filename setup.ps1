@@ -2,7 +2,8 @@
 param(
     [string]$SkillsDir = $env:PM_SKILLS_DIR,
     [switch]$Update,
-    [switch]$CheckOnly
+    [switch]$CheckOnly,
+    [switch]$SkipDependencies
 )
 
 $ErrorActionPreference = 'Stop'
@@ -14,7 +15,8 @@ $SkillsDir = [System.IO.Path]::GetFullPath($SkillsDir)
 $SkillsRepo = if ($env:PM_SKILLS_REPO) { $env:PM_SKILLS_REPO } else { 'https://github.com/prosperity-media-official/pm-skills.git' }
 
 if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-    throw 'Git is required. Install Git and rerun setup.ps1.'
+    if ($SkipDependencies) { throw 'Git is required. Rerun without -SkipDependencies to install it automatically.' }
+    & (Join-Path $WorkspaceRoot 'scripts\bootstrap-dependencies.ps1') -SkillsDir $SkillsDir -CheckOnly:$CheckOnly
 }
 
 foreach ($required in @('AGENTS.md', 'CLAUDE.md', 'clients', 'team', 'agency', 'knowledge')) {
@@ -36,6 +38,10 @@ if (-not (Test-Path -LiteralPath (Join-Path $SkillsDir '.git'))) {
         & git -C $SkillsDir pull --ff-only
         if ($LASTEXITCODE -ne 0) { throw 'Unable to update pm-skills with a fast-forward pull.' }
     }
+}
+
+if (-not $SkipDependencies) {
+    & (Join-Path $WorkspaceRoot 'scripts\bootstrap-dependencies.ps1') -SkillsDir $SkillsDir -CheckOnly:$CheckOnly
 }
 
 $skillSources = @(
@@ -97,10 +103,10 @@ if ($CheckOnly) {
     Write-Host "`nInstalled $($sources.Count) entries into both ~/.claude/skills and ~/.codex/skills."
     Write-Host "Workspace: $WorkspaceRoot"
     Write-Host "Skills:    $SkillsDir"
-    Write-Host 'Restart Codex/Claude Code, then run /pm-onboard.'
+    Write-Host 'Restart Codex/Claude Code, then run /pm-start and /pm-onboard.'
 }
 
-foreach ($runtime in @('python', 'python3', 'node', 'bun', 'bash')) {
+foreach ($runtime in @('git', 'gh', 'python', 'python3', 'node', 'npm', 'bun', 'bash')) {
     $state = if (Get-Command $runtime -ErrorAction SilentlyContinue) { 'found' } else { 'not found (some skills may need it)' }
     Write-Host ("  optional runtime: {0,-7} {1}" -f $runtime, $state)
 }

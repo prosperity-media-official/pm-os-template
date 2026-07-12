@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "requiredTools": ["git", "python", "node", "npm", "bun"],
+  "recommendedTools": ["gh", "bash"],
+  "pythonPackages": [
+    { "package": "openpyxl", "import": "openpyxl" },
+    { "package": "python-docx", "import": "docx" },
+    { "package": "requests", "import": "requests" },
+    { "package": "lxml", "import": "lxml" }
+  ],
+  "nodeProjects": [
+    "pm-aimode-journey/Tools",
+    "pm-schema-optimisation/scripts"
+  ],
+  "credentialChecks": [
+    "AHREFS_API_KEY",
+    "APIFY_API_TOKEN",
+    "DATAFORSEO_LOGIN",
+    "DATAFORSEO_PASSWORD",
+    "FIRECRAWL_API_KEY",
+    "GEMINI_API_KEY",
+    "GOOGLE_API_KEY",
+    "HARVEST_PERSONAL_ACCESS_TOKEN",
+    "OPENAI_API_KEY",
+    "SEOGETS_API_KEY",
+    "THRUUU_API_KEY"
+  ]
+}

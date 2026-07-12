@@ -27,11 +27,10 @@ This repository is a starter, not a shared client-data repository. Each teammate
 
 Required:
 
-- Git with access to the private Prosperity Media repositories
 - Codex, Claude Code, or both
 - On Windows, PowerShell 7 or Windows PowerShell 5.1
 
-Many individual skills also use Python 3, Node.js/Bun, Bash, browser tooling, or API credentials. The installer reports which optional runtimes are available. Put credentials only in the workspace-root `.env`; never commit it.
+Git is needed to obtain the initial template, but the AI setup flow can install it before cloning when a trusted system package manager is available. After the template is present, setup automatically bootstraps Git, GitHub CLI, Python 3, Node.js/npm, Bun, the common Python packages, and skill-local Node packages. Put credentials only in the workspace-root `.env`; never commit it. Authenticated services still require the user to complete their own sign-in or supply their own API key.
 
 ## Quick start
 
@@ -44,7 +43,7 @@ Set up my personal Prosperity OS automatically from the private GitHub template 
 
 Create a new private GitHub repository named pm-os under my authenticated GitHub account (or ask me which organisation to use if there is more than one valid destination), generate it from the template, and clone it locally into a folder named pm-os. Never add client or personal data to the shared pm-os-template repository.
 
-Then run the correct installer for my environment from the new pm-os root: setup.ps1 on native Windows, or setup.sh on macOS, Linux, WSL, or Git Bash. The installer must clone https://github.com/prosperity-media-official/pm-skills as a separate sibling repository named pm-skills, install or symlink all pm-* skills and the shared toolchain for both Claude Code and ChatGPT/Codex, and verify every link.
+Then run the correct installer for my environment from the new pm-os root: setup.ps1 on native Windows, or setup.sh on macOS, Linux, WSL, or Git Bash. Allow it to use the trusted system package manager when required. The installer must automatically install missing supported prerequisites, clone https://github.com/prosperity-media-official/pm-skills as a separate sibling repository named pm-skills, install all common Python and Node packages, install or symlink all pm-* skills and the shared toolchain for both Claude Code and ChatGPT/Codex, and verify every dependency and link.
 
 If GitHub authentication, the destination owner, or the local parent folder cannot be detected safely, ask me only for the missing value. Do not overwrite an existing pm-os or pm-skills folder, do not make either personal repository public, and do not place pm-skills inside pm-os. When setup is complete, report the local paths and repository URLs, tell me whether I need to restart my AI client, run /pm-start to verify the installation, and then guide me through /pm-onboard.
 ```
@@ -77,7 +76,7 @@ Install the Prosperity Media skills for this pm-os workspace from https://github
 
 Keep pm-skills as a separate sibling repository beside pm-os; never add it as a submodule or clone it inside pm-os. If a valid sibling pm-skills checkout already exists, reuse it and safely update it. Otherwise, clone it into a sibling folder named pm-skills.
 
-Detect whether I am using native Windows, macOS, Linux, WSL, or Git Bash, then run the correct pm-os installer. Install or symlink every pm-* skill and the required _shared toolchain for both Claude Code and ChatGPT/Codex. Do not overwrite real files or directories when repairing links. Run the installer verification and /pm-start health checks, report the pm-os and pm-skills paths and every installed skills destination, and tell me whether I need to restart either AI client.
+Detect whether I am using native Windows, macOS, Linux, WSL, or Git Bash, then run the correct pm-os installer. Automatically install all missing supported prerequisites using winget, Homebrew, apt, dnf, yum, pacman, npm, or pip as appropriate. This includes Git, GitHub CLI where available, Python 3, Node.js/npm, Bun, openpyxl, python-docx, requests, lxml, and all package.json dependencies inside pm-skills. Ask once before any administrator elevation. Install or symlink every pm-* skill and the required _shared toolchain for both Claude Code and ChatGPT/Codex. Do not overwrite real files or directories when repairing links. Run the dependency, installer, and /pm-start health checks, report the pm-os and pm-skills paths and every installed destination, and tell me whether I need to restart either AI client.
 
 If GitHub authentication or the intended parent folder cannot be detected safely, ask me only for the missing value before continuing.
 ```
@@ -98,10 +97,12 @@ bash setup.sh
 
 The installer:
 
-1. Clones `prosperity-media-official/pm-skills` as a sibling of this workspace if it is missing.
-2. Discovers every `pm-*` skill dynamically instead of relying on a stale hand-maintained list.
-3. Installs those skills plus the required `_shared` toolchain into both `~/.codex/skills/` and `~/.claude/skills/`.
-4. Verifies every installed target and safely repairs stale links on repeat runs.
+1. Installs missing supported runtimes with the detected trusted package manager.
+2. Clones `prosperity-media-official/pm-skills` as a sibling of this workspace if it is missing.
+3. Installs the common Python packages and each declared Node project dependency.
+4. Discovers every `pm-*` skill dynamically instead of relying on a stale hand-maintained list.
+5. Installs those skills plus the required `_shared` toolchain into both `~/.codex/skills/` and `~/.claude/skills/`.
+6. Verifies every dependency and installed target and safely repairs stale links on repeat runs.
 
 `pm-skills` is intentionally a separate sibling repository, not a submodule:
 
@@ -111,7 +112,7 @@ Prosperity Workspace/
 └── pm-skills/      <- shared team automation
 ```
 
-To use a different skills location, set `PM_SKILLS_DIR` first. To update an existing clone, run `./setup.ps1 -Update` or `bash setup.sh --update`.
+To use a different skills location, set `PM_SKILLS_DIR` first. To update an existing clone, run `./setup.ps1 -Update` or `bash setup.sh --update`. To prevent automatic dependency installation, use `-SkipDependencies` or `--skip-dependencies`.
 
 > WSL has a different home directory from native Windows. Use `setup.ps1` for native Windows apps; use `setup.sh` inside WSL only when Codex/Claude also runs inside WSL.
 
@@ -198,7 +199,7 @@ Confirmed corrections and preferences are recorded in the most-local instruction
 
 ### Safe installation and repair
 
-Installers support native Windows and POSIX environments, paths containing spaces, repeat runs, check-only validation, and safe stale-link repair. They never overwrite a real skills directory and do not automatically stash work, switch branches, or delete legacy repositories.
+Installers support native Windows and POSIX environments, paths containing spaces, repeat runs, automatic dependency bootstrapping, check-only validation, and safe stale-link repair. They never overwrite a real skills directory and do not automatically stash work, switch branches, or delete legacy repositories. Credentials and browser-based OAuth remain guided user actions.
 
 ## Updating and checking
 
