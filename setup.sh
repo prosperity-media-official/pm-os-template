@@ -1,47 +1,101 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo "Setting up Prosperity Brain workspace..."
-echo ""
+WORKSPACE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+SKILLS_DIR="${PM_SKILLS_DIR:-$(dirname "$WORKSPACE_ROOT")/pm-skills}"
+SKILLS_REPO="${PM_SKILLS_REPO:-https://github.com/prosperity-media-official/pm-skills.git}"
+UPDATE=0
+CHECK_ONLY=0
 
-# Check prosperity-skills submodule
-if [ ! -f "prosperity-skills/README.md" ]; then
-    echo "WARNING: prosperity-skills is missing!"
-    echo "  Run: git submodule update --init --recursive"
-    echo "  Without skills, /pm-new-project, /pm-codify, /pm-generate-content-brief, /pm-reporting won't work."
-    echo ""
-    echo "Attempting to initialise submodule now..."
-    git submodule update --init --recursive
+usage() {
+  printf 'Usage: bash setup.sh [--update] [--check] [--skills-dir PATH]\n'
+}
 
-    # Check again after attempting init
-    if [ ! -f "prosperity-skills/README.md" ]; then
-        echo ""
-        echo "ERROR: Could not initialise prosperity-skills."
-        echo "  Make sure you cloned with: git clone --recurse-submodules <repo-url>"
-        echo "  Or run: git submodule update --init --recursive"
-        exit 1
-    fi
-fi
-
-echo "prosperity-skills found."
-echo ""
-
-# Symlink skills into Claude Code skills directory
-mkdir -p ~/.claude/skills
-for skill in prosperity-skills/pm-*/; do
-    if [ -d "$skill" ]; then
-        skill_name=$(basename "$skill")
-        ln -sf "$(pwd)/$skill" "$HOME/.claude/skills/$skill_name"
-        echo "  Linked: $skill_name"
-    fi
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --update) UPDATE=1; shift ;;
+    --check) CHECK_ONLY=1; shift ;;
+    --skills-dir) SKILLS_DIR="${2:?--skills-dir requires a path}"; shift 2 ;;
+    -h|--help) usage; exit 0 ;;
+    *) printf 'Unknown option: %s\n' "$1" >&2; usage >&2; exit 2 ;;
+  esac
 done
 
-echo ""
-echo "Setup complete! Skills installed:"
-ls -d ~/.claude/skills/pm-* 2>/dev/null | xargs -I{} basename {} || echo "  (none found)"
-echo ""
-echo "Next steps:"
-echo "  1. Open Claude Code in this directory"
-echo "  2. Run /pm-onboard to set up your personal workspace"
-echo "  3. Run /pm-new-project to onboard your first client"
-echo "  4. Or manually create a client folder following _example-client/"
+command -v git >/dev/null 2>&1 || { printf 'ERROR: Git is required.\n' >&2; exit 1; }
+
+for required in AGENTS.md CLAUDE.md clients team agency knowledge; do
+  [[ -e "$WORKSPACE_ROOT/$required" ]] || { printf 'ERROR: Workspace is missing required path: %s\n' "$required" >&2; exit 1; }
+done
+
+if [[ ! -d "$SKILLS_DIR/.git" ]]; then
+  if [[ "$CHECK_ONLY" -eq 1 ]]; then
+    printf 'ERROR: pm-skills is missing at %s\n' "$SKILLS_DIR" >&2
+    exit 1
+  fi
+  printf 'Cloning pm-skills to %s\n' "$SKILLS_DIR"
+  git clone "$SKILLS_REPO" "$SKILLS_DIR"
+elif [[ "$UPDATE" -eq 1 ]]; then
+  if [[ -n "$(git -C "$SKILLS_DIR" status --porcelain)" ]]; then
+    printf 'WARNING: pm-skills has local changes; skipping update to preserve them.\n' >&2
+  else
+    git -C "$SKILLS_DIR" pull --ff-only
+  fi
+fi
+
+SKILLS_DIR="$(cd "$SKILLS_DIR" && pwd -P)"
+SKILL_SOURCES=()
+while IFS= read -r source; do
+  SKILL_SOURCES+=("$source")
+done < <(find "$SKILLS_DIR" -mindepth 1 -maxdepth 1 -type d -name 'pm-*' -exec test -f '{}/SKILL.md' ';' -print | sort)
+[[ ${#SKILL_SOURCES[@]} -gt 0 ]] || { printf 'ERROR: No valid pm-* skills found in %s\n' "$SKILLS_DIR" >&2; exit 1; }
+[[ -d "$SKILLS_DIR/_shared" ]] || { printf 'ERROR: Required _shared directory is missing.\n' >&2; exit 1; }
+SKILL_SOURCES+=("$SKILLS_DIR/_shared")
+
+install_link() {
+  local source="$1" destination="$2"
+  if [[ -L "$destination" ]]; then
+    if [[ "$CHECK_ONLY" -eq 0 ]]; then rm "$destination"; fi
+  elif [[ -e "$destination" ]]; then
+    printf 'ERROR: Refusing to overwrite real path: %s\n' "$destination" >&2
+    return 1
+  fi
+  if [[ "$CHECK_ONLY" -eq 0 ]]; then
+    ln -s "$source" "$destination"
+  fi
+}
+
+for runtime in .claude .codex; do
+  target_root="$HOME/$runtime/skills"
+  if [[ "$CHECK_ONLY" -eq 1 ]]; then
+    [[ -d "$target_root" ]] || { printf 'ERROR: Missing skills directory: %s\n' "$target_root" >&2; exit 1; }
+  else
+    mkdir -p "$target_root"
+  fi
+  for source in "${SKILL_SOURCES[@]}"; do
+    name="$(basename "$source")"
+    destination="$target_root/$name"
+    if [[ "$CHECK_ONLY" -eq 1 ]]; then
+      [[ -L "$destination" ]] || { printf 'ERROR: Installed target is missing or not a symlink: %s\n' "$destination" >&2; exit 1; }
+      [[ "$(readlink "$destination")" == "$source" ]] || { printf 'ERROR: Installed target points elsewhere: %s\n' "$destination" >&2; exit 1; }
+      [[ -e "$destination/SKILL.md" || "$name" == '_shared' ]] || { printf 'ERROR: Invalid installed skill: %s\n' "$destination" >&2; exit 1; }
+    else
+      install_link "$source" "$destination"
+    fi
+  done
+done
+
+if [[ "$CHECK_ONLY" -eq 0 ]]; then
+  printf '\nInstalled %s entries into both ~/.claude/skills and ~/.codex/skills.\n' "${#SKILL_SOURCES[@]}"
+  printf 'Workspace: %s\nSkills:    %s\n' "$WORKSPACE_ROOT" "$SKILLS_DIR"
+  printf 'Restart Codex/Claude Code, then run /pm-onboard.\n'
+else
+  printf 'OK: %s skill entries verified in both runtimes.\n' "${#SKILL_SOURCES[@]}"
+fi
+
+for runtime in python3 node bun bash; do
+  if command -v "$runtime" >/dev/null 2>&1; then
+    printf '  optional runtime: %-7s found\n' "$runtime"
+  else
+    printf '  optional runtime: %-7s not found (some skills may need it)\n' "$runtime"
+  fi
+done

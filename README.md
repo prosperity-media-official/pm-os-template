@@ -1,103 +1,216 @@
-# Prosperity Brain
+# Prosperity OS Starter
 
-A content marketing and SEO agency workspace powered by [Claude Code](https://claude.ai/code). Prosperity Brain gives you a structured, AI-native system for managing clients — from onboarding and brand docs to SEO deliverables, content briefs, and monthly reporting. Clone this template to bootstrap your own workspace and start onboarding clients immediately.
+A private, AI-native workspace for Prosperity Media strategists. It keeps client work, team knowledge, agency research, and shared automation in one predictable structure and works with both Codex and Claude Code.
 
----
+This repository is a starter, not a shared client-data repository. Each teammate creates their own private workspace from it.
+
+## Naming and repository model
+
+| Repository | Purpose | Ownership |
+|---|---|---|
+| `pm-os-template` | Clean starter maintained for the team | Shared, contains no client data |
+| `pm-os` | A teammate's working OS created from the template | Private to that teammate |
+| `pm-skills` | Shared Prosperity automation | Separate shared repository |
+
+`pm-os` is the canonical workspace and product name. Older installations may still be named `pm-brain`; `/pm-start` recognises that deprecated name for compatibility, but all new workspaces should use `pm-os`.
+
+## What is included
+
+- A current `clients/`, `team/`, `agency/`, and `knowledge/` workspace structure
+- Matching `AGENTS.md` (Codex) and `CLAUDE.md` (Claude Code) guidance
+- Scoped workflow rules for content, SEO, GEO, reporting, Pinterest, sales, and the knowledge wiki
+- An Obsidian-ready vault with machine-specific state excluded
+- Cross-platform installers that automatically clone the separate `pm-skills` repository and install all skills into both AI runtimes
+- A reusable example client and team-member skeleton with no real client or personal data
 
 ## Prerequisites
 
-> **CRITICAL: This workspace requires [prosperity-skills](https://github.com/reapzyau/pm-skills) to function.**
->
-> Without it, slash commands (`/pm-new-project`, `/pm-codify`, `/pm-generate-content-brief`, `/pm-reporting`, `/pm-generate-pinterest`, `/pm-generate-optimisation-brief`, `/pm-onboard`, `/pm-skill-creator`) will not work and you'll lose the majority of the automation this system provides.
->
-> The skills are included as a git submodule. Always clone with `--recurse-submodules` (see Quick Start below).
+Required:
 
-You also need:
-- [Git](https://git-scm.com/) installed
-- [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) installed and authenticated
-- **GitHub access** to both this repo and [prosperity-skills](https://github.com/reapzyau/pm-skills) (both are private — you must be added as a collaborator on each)
+- Git with access to the private Prosperity Media repositories
+- Codex, Claude Code, or both
+- On Windows, PowerShell 7 or Windows PowerShell 5.1
 
-## Quick Start
+Many individual skills also use Python 3, Node.js/Bun, Bash, browser tooling, or API credentials. The installer reports which optional runtimes are available. Put credentials only in the workspace-root `.env`; never commit it.
+
+## Quick start
+
+### AI-assisted setup (recommended)
+
+Open Codex or Claude Code in the parent folder where you want your Prosperity workspace, then paste this prompt:
+
+```text
+Set up my personal Prosperity OS automatically from the private GitHub template at https://github.com/prosperity-media-official/pm-os-template.
+
+Create a new private GitHub repository named pm-os under my authenticated GitHub account (or ask me which organisation to use if there is more than one valid destination), generate it from the template, and clone it locally into a folder named pm-os. Never add client or personal data to the shared pm-os-template repository.
+
+Then run the correct installer for my environment from the new pm-os root: setup.ps1 on native Windows, or setup.sh on macOS, Linux, WSL, or Git Bash. The installer must clone https://github.com/prosperity-media-official/pm-skills as a separate sibling repository named pm-skills, install or symlink all pm-* skills and the shared toolchain for both Claude Code and ChatGPT/Codex, and verify every link.
+
+If GitHub authentication, the destination owner, or the local parent folder cannot be detected safely, ask me only for the missing value. Do not overwrite an existing pm-os or pm-skills folder, do not make either personal repository public, and do not place pm-skills inside pm-os. When setup is complete, report the local paths and repository URLs, tell me whether I need to restart my AI client, run /pm-start to verify the installation, and then guide me through /pm-onboard.
+```
+
+The AI will use your existing GitHub authentication where available. If needed, it will pause so you can sign in or choose the account or organisation that should own your private `pm-os` repository.
+
+### 1. Create your own private workspace
+
+Use GitHub's **Use this template** action and create a **private** repository, then clone your new repository:
+
+```powershell
+git clone https://github.com/YOUR-ORG/YOUR-PRIVATE-OS.git pm-os
+cd pm-os
+```
+
+If you cloned this source repository directly, detach it before adding client data:
+
+```powershell
+git remote rename origin template
+git remote add origin https://github.com/YOUR-ORG/YOUR-PRIVATE-OS.git
+git push -u origin main
+```
+
+### 2. Install the shared skills
+
+Windows (recommended for native Windows Codex/Claude):
+
+```powershell
+./setup.ps1
+```
+
+macOS, Linux, WSL, or Git Bash:
 
 ```bash
-# 1. Clone with submodules (critical — don't skip --recurse-submodules)
-git clone --recurse-submodules https://github.com/reapzyau/pm-brain-template.git my-workspace
-
-# 2. Run setup (installs skills into Claude Code)
-cd my-workspace && bash setup.sh
-
-# 3. Open Claude Code and set up your workspace
-claude
-
-# 4. Inside Claude Code — onboard yourself first, then your first client
-# Run /pm-onboard to create your personal folder (SOPs, tasks, notes)
-# Run /pm-new-project to onboard your first client
+bash setup.sh
 ```
 
-## Workspace Structure
+The installer:
 
-```
-my-workspace/
-├── CLAUDE.md                  ← Agency-wide rules & conventions (auto-loaded by Claude Code)
-├── README.md                  ← This file
-├── setup.sh                   ← One-time setup script
-├── .prosperity-brain/         ← Global "Brain" — agency-wide resources & research
-│   └── research/              ← Guides, frameworks, non-client research
-├── prosperity-skills/         ← Claude Code skills (git submodule)
-├── _example-client/           ← Skeleton client folder (rename or delete after first real client)
-│   ├── CLAUDE.md              ← Client-specific brand rules template
-│   ├── business/              ← Business context, tone of voice, avatars
-│   ├── assets/                ← PDFs, images, brochures
-│   ├── content/               ← Content briefs by year/month
-│   ├── seo/                   ← SEO deliverables (content/, technical/, ad-hoc/)
-│   ├── research/              ← Client-specific research
-│   ├── reporting/             ← Monthly reports, QBRs
-│   └── pinterest/             ← Pinterest pin generation output
-└── <your-clients>/            ← Created by /pm-new-project
+1. Clones `prosperity-media-official/pm-skills` as a sibling of this workspace if it is missing.
+2. Discovers every `pm-*` skill dynamically instead of relying on a stale hand-maintained list.
+3. Installs those skills plus the required `_shared` toolchain into both `~/.codex/skills/` and `~/.claude/skills/`.
+4. Verifies every installed target and safely repairs stale links on repeat runs.
+
+`pm-skills` is intentionally a separate sibling repository, not a submodule:
+
+```text
+Prosperity Workspace/
+├── pm-os/          <- your private workspace
+└── pm-skills/      <- shared team automation
 ```
 
-## Skills
+To use a different skills location, set `PM_SKILLS_DIR` first. To update an existing clone, run `./setup.ps1 -Update` or `bash setup.sh --update`.
 
-Custom Claude Code skills included via the `prosperity-skills/` submodule.
+> WSL has a different home directory from native Windows. Use `setup.ps1` for native Windows apps; use `setup.sh` inside WSL only when Codex/Claude also runs inside WSL.
 
-| Skill | Trigger | Purpose |
-|-------|---------|---------|
-| `pm-onboard` | `/pm-onboard` | Scaffold a personal team member folder with guided walkthrough |
-| `pm-new-project` | `/pm-new-project` | Onboard a new client — guided walkthrough, website scrape, generates full folder structure and docs |
-| `pm-generate-content-brief` | `/pm-generate-content-brief` | Generate SEO content briefs as DOCX files |
-| `pm-codify` | `/pm-codify` | Convert client documents (PDF, DOCX, etc.) to markdown and file them |
-| `pm-reporting` | `/pm-reporting` | Generate monthly SEO performance report emails |
-| `pm-generate-pinterest` | `/pm-generate-pinterest` | Generate Pinterest-optimised pin images at scale with Gemini |
-| `pm-generate-optimisation-brief` | `/pm-generate-optimisation-brief` | Generate SEO optimisation briefs with inline comments for existing content |
-| `pm-skill-creator` | `/pm-skill-creator` | Create new Prosperity skills with validated structure and best-practice compliance |
+### 3. Personalise the workspace
 
-## Adding a New Client
+1. Run `/pm-onboard` to create `team/<your-name>/`.
+2. Run `/pm-new-project` to create your first client under `clients/`.
+3. Delete the `_example-*` folders after you no longer need them.
+4. Optionally open the folder as an Obsidian vault.
+5. Optionally run `/pm-install-command-centre` after onboarding to install the per-user dashboard.
 
-Run `/pm-new-project` inside Claude Code — the skill handles everything automatically (folder structure, CLAUDE.md, business docs).
+You can also invoke `/pm-start` from either supported AI client. On a first run it detects whether the separate `pm-skills` checkout exists, prompts before downloading it, asks whether to install for Claude Code, ChatGPT/Codex, or both, and validates every link before reporting success.
 
-Or manually: create a folder following the `_example-client/` structure and add your own `CLAUDE.md` and `business/` docs.
+### 4. Recommended first-day sequence
 
-## Updating Skills
+```text
+Create private repository from pm-os-template
+        ↓
+Clone it locally as pm-os
+        ↓
+Run setup.ps1 or setup.sh
+        ↓
+Restart Claude Code or ChatGPT/Codex
+        ↓
+Run /pm-start to verify the installation
+        ↓
+Run /pm-onboard to create your team workspace
+        ↓
+Run /pm-new-project to add your first client
+```
 
-To pull the latest version of prosperity-skills:
+After onboarding, the normal working pattern is: open `pm-os`, name the client or task, let the AI load the relevant client and business context, run the appropriate `pm-*` skill, review the filed output, then commit completed work to the teammate's private repository.
+
+## Workspace structure
+
+```text
+pm-os/
+├── AGENTS.md                  <- Codex agency rules
+├── CLAUDE.md                  <- Claude Code entry point
+├── clients/                   <- one folder per client
+│   └── _example-client/
+├── team/                      <- personal workspaces and pre-engagement sales
+│   ├── _example-team-member/
+│   └── sales/
+├── agency/                    <- shared research, playbooks, templates, plans, and outputs
+├── knowledge/                 <- raw sources and compiled Obsidian wiki
+├── .claude/rules/             <- path-scoped domain rules
+├── .obsidian/                 <- portable vault settings only
+├── setup.ps1                  <- native Windows installer
+└── setup.sh                   <- POSIX installer
+```
+
+Every client starts with four living business documents: `business-context.md`, `offer.md`, `customer-avatar.md`, and `tone-of-voice.md`. Read all four plus the client's `AGENTS.md` or `CLAUDE.md` before producing client work.
+
+## Core features
+
+### Claude and ChatGPT/Codex support
+
+The same workspace supports both clients. Codex reads `AGENTS.md` and discovers skills through `~/.codex/skills/`; Claude Code reads `CLAUDE.md` and discovers skills through `~/.claude/skills/`.
+
+### Shared skills, private workspaces
+
+Every teammate has a private `pm-os` containing their client and personal context while using the same separately maintained `pm-skills` repository. New skills are discovered dynamically and linked by setup or `/pm-start`.
+
+### Structured client operations
+
+Each client receives dedicated areas for business context, assets, staged content, SEO, GEO, strategy, research, meetings, reporting, Pinterest, dashboards, and tasks. The routing rules keep client-facing outputs separate from raw inputs and internal work.
+
+### Staged content production
+
+Content moves through `1-brief`, `2-article`, `3-qa`, and `4-final`, with separate Markdown and DOCX folders plus a source-provenance area. QA produces a new artifact instead of overwriting the article.
+
+### SEO, GEO, reporting, and Pinterest workflows
+
+Scoped rules cover keyword research, topical maps, technical audits, structured data, AI visibility, prompt tracking, monthly reporting, Pinterest generation, and metadata handling. Outputs are placed in predictable client folders with ISO-dated filenames.
+
+### Obsidian knowledge system
+
+`pm-os` is an Obsidian-ready vault. Agency resources live under `agency/`; immutable evidence lives under `knowledge/raw/`; maintained synthesis and indexes live under `knowledge/wiki/`.
+
+### Self-improving operating system
+
+Confirmed corrections and preferences are recorded in the most-local instruction surface: the root OS, a client, a team member, a scoped rule, or a shared skill. Mechanically checkable requirements should become validators rather than remaining prose reminders.
+
+### Safe installation and repair
+
+Installers support native Windows and POSIX environments, paths containing spaces, repeat runs, check-only validation, and safe stale-link repair. They never overwrite a real skills directory and do not automatically stash work, switch branches, or delete legacy repositories.
+
+## Updating and checking
+
+```powershell
+./setup.ps1 -Update
+./setup.ps1 -CheckOnly
+```
 
 ```bash
-git submodule update --remote prosperity-skills
-git add prosperity-skills
-git commit -m "Update prosperity-skills to latest"
+bash setup.sh --update
+bash setup.sh --check
 ```
 
-## How prosperity-skills Works (Submodule)
+The tested skills revision is recorded in `skills-lock.json`. It is a compatibility marker, not a vendored dependency lock; the installer normally uses the sibling checkout you control.
 
-`prosperity-skills` is included as a **git submodule** — a repo-inside-a-repo. You don't need to clone it separately.
+For a repository-only health check, run `./scripts/verify-template.ps1`. This validates the starter structure, JSON files, instruction pairing, submodule removal, required client skeleton, and stale v1 references.
 
-- **When you clone with `--recurse-submodules`**, git automatically pulls `prosperity-skills` into the `prosperity-skills/` folder. One command, both repos.
-- **If you forget `--recurse-submodules`**, the `prosperity-skills/` folder will exist but be empty. Run `bash setup.sh` or `git submodule update --init --recursive` to fix it.
-- **Access requirement:** Since both repos are private, you need collaborator access to **both** `prosperity-brain-template` and `prosperity-skills`. If you can clone the template but the submodule fails with a permission error, ask to be added to the `prosperity-skills` repo.
+If the workspace or `pm-skills` folder moves, rerun setup to repair links. The installer never overwrites a real file or directory in a skills destination; it stops and tells you which collision needs manual review.
 
-## Conventions
+## Security and ownership
 
-- **File naming:** All research and SEO files use a `DD-MM-YYYY-` date prefix (e.g., `03-03-2026-keyword-report.md`)
-- **Client CLAUDE.md:** Each client folder has its own `CLAUDE.md` — Claude Code auto-loads it when working in that directory
-- **Self-improvement:** Claude autonomously records learned preferences in CLAUDE.md files
-- See the root `CLAUDE.md` for full rules
+- Keep every personal OS workspace repository private: it will contain confidential client information.
+- Never copy `.env`, memory, client files, or machine-local settings between team members.
+- Commit reusable harness improvements to the template; commit shared automation to `pm-skills`; keep client and personal context in your private workspace.
+- Review `git status` before every push.
+
+## Optional dependencies
+
+Some writing workflows use the separate `pm-agents` plugin for the Prosperity copywriter agent and fall back to inline drafting if it is unavailable. Some dashboard workflows use the separate `pm-command-centre` repository. Their relevant skills provide the current installation flow; they are not embedded in this template.

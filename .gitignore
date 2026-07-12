@@ -1,8 +1,39 @@
-# Obsidian vault config
-.obsidian/
-
-__pycache__/
-*.pyc
+# Secrets
 .env
+.env.*
+!.env.example
+
+# OS and editor state
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+.serena/
+*.swp
+~$*
+
+# Runtime and build output
+__pycache__/
+*.py[cod]
+node_modules/
+.netlify/
 /tmp/
 *.jsonl
+
+# Machine-specific AI state (portable rules remain tracked)
+.claude/settings.local.json
+.claude/MEMORY/STATE/
+.claude/MEMORY/WORK/
+.codex/local*
+MEMORY/
+/Plans/
+
+# Obsidian machine state. Portable settings are explicitly tracked.
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache/
+
+# Shared skills are a sibling repo, never nested in pm-os.
+/pm-skills/
+/prosperity-skills/

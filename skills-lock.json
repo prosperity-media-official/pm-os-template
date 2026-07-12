@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "architecture": "sibling-repository",
+  "repository": "https://github.com/prosperity-media-official/pm-skills.git",
+  "testedCommit": "6f4068214f8032393177975b5e6f376bebdbb03d",
+  "testedOn": "2026-07-13",
+  "requiredEntries": ["pm-*", "_shared"],
+  "installTargets": ["~/.claude/skills", "~/.codex/skills"],
+  "notes": "Compatibility marker only. Run setup with --update or -Update to fast-forward an existing clean sibling checkout."
+}
