@@ -68,7 +68,21 @@ git remote add origin https://github.com/YOUR-ORG/YOUR-PRIVATE-OS.git
 git push -u origin main
 ```
 
-### 2. Install the shared skills
+### 2. Install `pm-skills` with AI
+
+From Codex or Claude Code, open your new `pm-os` workspace and paste:
+
+```text
+Install the Prosperity Media skills for this pm-os workspace from https://github.com/prosperity-media-official/pm-skills.
+
+Keep pm-skills as a separate sibling repository beside pm-os; never add it as a submodule or clone it inside pm-os. If a valid sibling pm-skills checkout already exists, reuse it and safely update it. Otherwise, clone it into a sibling folder named pm-skills.
+
+Detect whether I am using native Windows, macOS, Linux, WSL, or Git Bash, then run the correct pm-os installer. Install or symlink every pm-* skill and the required _shared toolchain for both Claude Code and ChatGPT/Codex. Do not overwrite real files or directories when repairing links. Run the installer verification and /pm-start health checks, report the pm-os and pm-skills paths and every installed skills destination, and tell me whether I need to restart either AI client.
+
+If GitHub authentication or the intended parent folder cannot be detected safely, ask me only for the missing value before continuing.
+```
+
+The AI handles the clone, updates, runtime detection, links, and verification. The commands below are available only as a manual fallback.
 
 Windows (recommended for native Windows Codex/Claude):
 
@@ -118,7 +132,7 @@ Create private repository from pm-os-template
         ↓
 Clone it locally as pm-os
         ↓
-Run setup.ps1 or setup.sh
+Paste the AI prompt to install pm-skills
         ↓
 Restart Claude Code or ChatGPT/Codex
         ↓
@@ -158,7 +172,7 @@ Every client starts with four living business documents: `business-context.md`, 
 
 The same workspace supports both clients. Codex reads `AGENTS.md` and discovers skills through `~/.codex/skills/`; Claude Code reads `CLAUDE.md` and discovers skills through `~/.claude/skills/`.
 
-### Shared skills, private workspaces
+### `pm-skills`, private workspaces
 
 Every teammate has a private `pm-os` containing their client and personal context while using the same separately maintained `pm-skills` repository. New skills are discovered dynamically and linked by setup or `/pm-start`.
 

@@ -107,3 +107,4 @@ When the user directly corrects the system, report where the correction was reco
 
 - `/pm-start` must treat `pm-skills` as a separate sibling repository and explicitly prompt first-time users to download it and install all skill links for Claude Code, ChatGPT/Codex, or both.
 - The canonical workspace and product name is `pm-os` / **Prosperity OS**. Use `pm-brain` only when documenting or detecting a legacy installation.
+- Present a copy-paste AI prompt as the primary `pm-skills` installation method in onboarding documentation; keep direct setup commands as a manual fallback.
