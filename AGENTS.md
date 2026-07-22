@@ -35,6 +35,20 @@ Before producing client work:
 
 Whenever durable new client information is confirmed, update the most-local client instruction or living business document. Never put volatile metrics, deadlines, or task lists into instruction files.
 
+## Finding information
+
+The workspace has a local search layer. Before speculatively reading folders to orient, query it:
+
+```bash
+python3 .claude/lib/pm_search.py query "<question>" --scope clients/<client>  # hybrid ranked search (RRF-fused)
+python3 .claude/lib/pm_search.py grep "<exact string>"                        # literal match (URLs, names, errors)
+python3 .claude/lib/pm_search.py recent --scope <scope> --days 14             # what changed lately
+python3 .claude/lib/pm_search.py who-knows "<topic>"                          # people signals (heuristic)
+python3 .claude/lib/pm_search.py scopes                                       # list available scopes
+```
+
+Pass `--scope` whenever the client or domain is known. The index behind it: `python3 .claude/lib/pm_index.py build` (incremental — run it when `pm_index.py status` reports stale, and at session end). `pm_index.py sync-indexes` maintains wiki `_index.md` stats and root `MEMORY.md` — never hand-count index stats. New knowledge docs carry the standard frontmatter in `.claude/rules/frontmatter.md`; `description` (the one-line question the doc answers) is what makes search work.
+
 ## Folder routing
 
 State the proposed destination before creating a substantial file.

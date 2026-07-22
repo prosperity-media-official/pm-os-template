@@ -37,3 +37,7 @@ MEMORY/
 # Shared skills are a sibling repo, never nested in pm-os.
 /pm-skills/
 /prosperity-skills/
+
+# pm_index artifacts: knowledge/.index/catalog.jsonl IS committed; local dbs are not
+/knowledge/.index/*.db
+/knowledge/.index/*.db-*

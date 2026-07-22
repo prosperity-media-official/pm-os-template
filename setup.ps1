@@ -110,3 +110,22 @@ foreach ($runtime in @('git', 'gh', 'python', 'python3', 'node', 'npm', 'bun', '
     $state = if (Get-Command $runtime -ErrorAction SilentlyContinue) { 'found' } else { 'not found (some skills may need it)' }
     Write-Host ("  optional runtime: {0,-7} {1}" -f $runtime, $state)
 }
+
+# Build the knowledge index (Phase 0+1 default — catalog + local search db).
+if (-not $CheckOnly) {
+    $python = Get-Command python3 -ErrorAction SilentlyContinue
+    if (-not $python) { $python = Get-Command python -ErrorAction SilentlyContinue }
+    $indexer = Join-Path $WorkspaceRoot '.claude\lib\pm_index.py'
+    if ($python -and (Test-Path -LiteralPath $indexer)) {
+        Write-Host "`nBuilding knowledge index (incremental; first run can take a few minutes)..."
+        Push-Location $WorkspaceRoot
+        try {
+            & $python.Source $indexer build
+            & $python.Source $indexer sync-indexes
+        } catch {
+            Write-Warning "Knowledge index build failed - run manually: python .claude\lib\pm_index.py build"
+        } finally {
+            Pop-Location
+        }
+    }
+}

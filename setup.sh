@@ -110,3 +110,12 @@ for runtime in git gh python3 node npm bun bash; do
     printf '  optional runtime: %-7s not found (some skills may need it)\n' "$runtime"
   fi
 done
+
+# Build the knowledge index (Phase 0+1 default — catalog + local search db).
+if [[ "$CHECK_ONLY" -eq 0 ]] && command -v python3 >/dev/null 2>&1 && [[ -f "$WORKSPACE_ROOT/.claude/lib/pm_index.py" ]]; then
+  printf '\nBuilding knowledge index (incremental; first run can take a few minutes)...\n'
+  ( cd "$WORKSPACE_ROOT" \
+      && python3 .claude/lib/pm_index.py build \
+      && python3 .claude/lib/pm_index.py sync-indexes ) \
+    || printf 'WARN: knowledge index build failed — run manually: python3 .claude/lib/pm_index.py build\n'
+fi
