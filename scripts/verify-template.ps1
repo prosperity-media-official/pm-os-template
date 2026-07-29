@@ -16,14 +16,10 @@ $required = @(
     'skills-lock.json',
     'scripts/bootstrap-dependencies.ps1',
     'scripts/bootstrap-dependencies.sh',
-    '.claude/rules/content-rules.md',
-    '.claude/rules/geo-rules.md',
-    'clients/_example-client/AGENTS.md',
-    'clients/_example-client/CLAUDE.md',
-    'clients/_example-client/business/business-context.md',
-    'clients/_example-client/business/offer.md',
-    'clients/_example-client/business/customer-avatar.md',
-    'clients/_example-client/business/tone-of-voice.md',
+    '.claude/rules/frontmatter.md',
+    '.claude/rules/sales-rules.md',
+    '.pm/config.json',
+    '.pm/clients.json',
     'team/_example-team-member/AGENTS.md',
     'knowledge/wiki/_log.md'
 )
@@ -34,7 +30,12 @@ foreach ($path in $required) {
     }
 }
 
-$jsonFiles = @('dependencies.json', 'skills-lock.json', '.obsidian/app.json', '.obsidian/appearance.json', '.obsidian/core-plugins.json', '.obsidian/community-plugins.json')
+# v2: client work lives in sibling repositories, never inside this workspace.
+if (Test-Path -LiteralPath (Join-Path $Root 'clients')) {
+    $failures.Add('A clients/ folder exists. v2 keeps client work in sibling repositories; run /pm-migrate-clients.')
+}
+
+$jsonFiles = @('dependencies.json', 'skills-lock.json', '.pm/config.json', '.pm/clients.json', '.obsidian/app.json', '.obsidian/appearance.json', '.obsidian/core-plugins.json', '.obsidian/community-plugins.json')
 foreach ($json in $jsonFiles) {
     try { Get-Content -LiteralPath (Join-Path $Root $json) -Raw | ConvertFrom-Json | Out-Null }
     catch { $failures.Add("Invalid JSON: $json") }

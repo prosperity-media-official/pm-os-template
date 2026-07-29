@@ -13,27 +13,48 @@ Never add `pm-skills` as a submodule or nested repository. Rerun setup after eit
 ## Structure
 
 ```text
-pm-os/
-├── clients/       one folder per client
-├── team/          team-member workspaces and pre-engagement sales
-├── agency/        shared research, SEO/GEO playbooks, plans, outputs, YouTube
-├── knowledge/     immutable raw sources and LLM-maintained wiki
-├── .claude/rules/ path-scoped domain rules
-└── .obsidian/     portable vault configuration
+Prosperity Workspace/
+├── pm-os/                    this repository — your private workspace
+│   ├── .pm/clients.json      client registry: pointers only, never client work
+│   ├── team/                 team-member workspaces and pre-engagement sales
+│   ├── agency/               shared research, SEO/GEO playbooks, plans, outputs, YouTube
+│   ├── knowledge/            immutable raw sources and LLM-maintained wiki
+│   ├── .claude/rules/        path-scoped domain rules
+│   └── .obsidian/            portable vault configuration
+├── pm-skills/                shared team automation
+└── pm-<slug>/                one repository per client
 ```
 
-Each client lives under `clients/<client>/` and should contain `AGENTS.md`, `CLAUDE.md`, `business/`, `assets/`, `content/`, `seo/`, `geo/`, `strategy/`, `research/`, `meetings/`, `reporting/`, and `tasks/`.
+**Client work never lives in this repository.** Each client has its own repository, a flat sibling of `pm-os`, containing `AGENTS.md`, `CLAUDE.md`, its own `.claude/rules/`, `business/`, `assets/`, `content/`, `seo/`, `geo/`, `strategy/`, `research/`, `meetings/`, `reporting/`, `pinterest/`, `dashboard/`, and `tasks/`.
+
+The repo is the access boundary. Separating clients this way lets a client be shared with a teammate, a contractor, or the client themselves without exposing anything else. `pm-os` records only where each one is.
+
+## Client repositories
+
+`.pm/clients.json` maps each client slug to a path relative to this workspace. Each client repo identifies itself with `.pm/client.json`, which is what lets `/pm-start` discover repos the registry has not caught up with.
+
+```bash
+python3 "<pm-skills>/_shared/scripts/pm_paths.py" list            # registered clients
+python3 "<pm-skills>/_shared/scripts/pm_paths.py" resolve <slug>  # slug -> real path
+python3 "<pm-skills>/_shared/scripts/pm_paths.py" reconcile       # registry vs disk
+```
+
+- Add a client with `/pm-new-project` — it checks the organisation for an existing repo first, scaffolds, commits, and registers.
+- `/pm-start` reports anything unregistered, missing, or still legacy.
+- If a `clients/` folder still exists here, this workspace predates v2. Run `/pm-migrate-clients`.
+
+Never resolve a client path by hand or assume a folder location; always go through the resolver.
 
 ## Context loading
 
 Before producing client work:
 
-1. Read the client's `AGENTS.md` and/or `CLAUDE.md`.
-2. Read all four living business documents: `business/business-context.md`, `business/offer.md`, `business/customer-avatar.md`, and `business/tone-of-voice.md`.
-3. Read the relevant path-scoped rule in `.claude/rules/`.
+1. Resolve the client repo, then read its `AGENTS.md`.
+2. Read all four living business documents in that repo: `business/business-context.md`, `business/offer.md`, `business/customer-avatar.md`, and `business/tone-of-voice.md`.
+3. The client repo's own `.claude/rules/` auto-load by path once you open a file there.
 4. Use current source material; never infer confidential facts from another client.
 
-Whenever durable new client information is confirmed, update the most-local client instruction or living business document. Never put volatile metrics, deadlines, or task lists into instruction files.
+Whenever durable new client information is confirmed, update the most-local instruction or living business document **in that client's repository**. Never put volatile metrics, deadlines, or task lists into instruction files. Never copy one client's material into another's repo or into `pm-os`.
 
 ## Finding information
 
@@ -47,7 +68,9 @@ python3 .claude/lib/pm_search.py who-knows "<topic>"                          # 
 python3 .claude/lib/pm_search.py scopes                                       # list available scopes
 ```
 
-Pass `--scope` whenever the client or domain is known. The index behind it: `python3 .claude/lib/pm_index.py build` (incremental — run it when `pm_index.py status` reports stale, and at session end). `pm_index.py sync-indexes` maintains wiki `_index.md` stats and root `MEMORY.md` — never hand-count index stats. New knowledge docs carry the standard frontmatter in `.claude/rules/frontmatter.md`; `description` (the one-line question the doc answers) is what makes search work.
+Pass `--scope` whenever the client or domain is known. `--scope clients/<slug>` still works even though clients live in separate repositories — the indexer walks every linked client repo and files it under that scope, so the vocabulary is unchanged. Client documents are searchable locally but are deliberately kept out of the committed `knowledge/.index/catalog.jsonl`, so this workspace never mirrors client content.
+
+The index behind it: `python3 .claude/lib/pm_index.py build` (incremental — run it when `pm_index.py status` reports stale, and at session end). `pm_index.py sync-indexes` maintains wiki `_index.md` stats and root `MEMORY.md` — never hand-count index stats. New knowledge docs carry the standard frontmatter in `.claude/rules/frontmatter.md`; `description` (the one-line question the doc answers) is what makes search work.
 
 ## Folder routing
 
@@ -55,7 +78,7 @@ State the proposed destination before creating a substantial file.
 
 | Purpose | Destination |
 |---|---|
-| Client work | `clients/<client>/<most-specific-subfolder>/` |
+| Client work | the client's own repository — resolve it, never guess a path |
 | Team-member SOP, note, task, template, or tool | `team/<name>/<subfolder>/` |
 | Pre-engagement sales work | `team/sales/` |
 | Agency-wide research or framework | `agency/research/` |
@@ -84,10 +107,10 @@ State the proposed destination before creating a substantial file.
 
 ## Content pipeline
 
-Content uses one folder per keyword and numbered stages:
+Content is produced inside the client's own repository, one folder per keyword with numbered stages:
 
 ```text
-clients/<client>/content/YYYY/NN-Month/<keyword-slug>/
+<client-repo>/content/YYYY/NN-Month/<keyword-slug>/
 ├── 1-brief/{md,docx}/
 ├── 2-article/{md,docx}/
 ├── 3-qa/{md,docx}/
@@ -95,7 +118,7 @@ clients/<client>/content/YYYY/NN-Month/<keyword-slug>/
 └── source/{md,docx}/
 ```
 
-Never leave files loose at the keyword root. QA creates a new artifact and never overwrites the article. Keep matching Markdown and DOCX outputs in sync. HTML and Google uploads are opt-in, not default outputs. See `.claude/rules/content-rules.md`.
+Never leave files loose at the keyword root. QA creates a new artifact and never overwrites the article. Keep matching Markdown and DOCX outputs in sync. HTML and Google uploads are opt-in, not default outputs. The full rule ships inside each client repo at `.claude/rules/content-rules.md` and auto-loads when you open a file under `content/`.
 
 ## Obsidian and knowledge
 
@@ -112,7 +135,8 @@ When the user directly corrects the system, report where the correction was reco
 ## Adding teammates and clients
 
 - Run `/pm-onboard` to scaffold `team/<name>/`.
-- Run `/pm-new-project` to scaffold `clients/<client>/`.
+- Run `/pm-new-project` to create a client's own repository and link it here. It checks the `prosperity-media-official` organisation first — if a teammate already onboarded that client, you join their repo rather than creating a second one.
+- Run `/pm-migrate-clients` once if this workspace still has a legacy `clients/` folder.
 - Use the `_example-*` folders only as references; do not put real information into them.
 
 ## Learned preferences

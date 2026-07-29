@@ -11,17 +11,22 @@ This repository is a starter, not a shared client-data repository. Each teammate
 | `pm-os-template` | Clean starter maintained for the team | Shared, contains no client data |
 | `pm-os` | A teammate's working OS created from the template | Private to that teammate |
 | `pm-skills` | Shared Prosperity automation | Separate shared repository |
+| `pm-<slug>` | One repository per client — all of that client's work | Private, access granted per person |
 
 `pm-os` is the canonical workspace and product name. Older installations may still be named `pm-brain`; `/pm-start` recognises that deprecated name for compatibility, but all new workspaces should use `pm-os`.
 
+**Client work lives in its own repository, never inside `pm-os`.** The repo is the access boundary: a client can be shared with a teammate, a contractor, or the client themselves without exposing the rest of your workspace. `pm-os` keeps pointers only, in `.pm/clients.json`.
+
+If you have an older workspace with a `clients/` folder, run `/pm-migrate-clients` to split each client into its own repository.
+
 ## What is included
 
-- A current `clients/`, `team/`, `agency/`, and `knowledge/` workspace structure
+- A current `team/`, `agency/`, and `knowledge/` workspace structure, plus the `.pm/` client registry
 - Matching `AGENTS.md` (Codex) and `CLAUDE.md` (Claude Code) guidance
-- Scoped workflow rules for content, SEO, GEO, reporting, Pinterest, sales, and the knowledge wiki
+- Scoped workflow rules for sales, the knowledge wiki, and document frontmatter — client-facing rules for content, SEO, GEO, reporting, and Pinterest ship inside each client repository so they travel with the work
 - An Obsidian-ready vault with machine-specific state excluded
 - Cross-platform installers that automatically clone the separate `pm-skills` repository and install all skills into both AI runtimes
-- A reusable example client and team-member skeleton with no real client or personal data
+- A reusable team-member skeleton with no real client or personal data
 
 ## Prerequisites
 
@@ -119,7 +124,7 @@ To use a different skills location, set `PM_SKILLS_DIR` first. To update an exis
 ### 3. Personalise the workspace
 
 1. Run `/pm-onboard` to create `team/<your-name>/`.
-2. Run `/pm-new-project` to create your first client under `clients/`.
+2. Run `/pm-new-project` to create your first client repository beside `pm-os`.
 3. Delete the `_example-*` folders after you no longer need them.
 4. Optionally open the folder as an Obsidian vault.
 5. Optionally run `/pm-install-command-centre` after onboarding to install the per-user dashboard.
@@ -141,31 +146,42 @@ Run /pm-start to verify the installation
         ↓
 Run /pm-onboard to create your team workspace
         ↓
-Run /pm-new-project to add your first client
+Run /pm-new-project to create your first client repository
 ```
 
-After onboarding, the normal working pattern is: open `pm-os`, name the client or task, let the AI load the relevant client and business context, run the appropriate `pm-*` skill, review the filed output, then commit completed work to the teammate's private repository.
+After onboarding, the normal working pattern is: open `pm-os`, name the client or task, let the AI resolve and load that client's repository and business context, run the appropriate `pm-*` skill, review the filed output, then commit the client work to **that client's repository** and any workspace changes to `pm-os`.
 
 ## Workspace structure
 
 ```text
-pm-os/
-├── AGENTS.md                  <- Codex agency rules
-├── CLAUDE.md                  <- Claude Code entry point
-├── clients/                   <- one folder per client
-│   └── _example-client/
-├── team/                      <- personal workspaces and pre-engagement sales
-│   ├── _example-team-member/
-│   └── sales/
-├── agency/                    <- shared research, playbooks, templates, plans, and outputs
-├── knowledge/                 <- raw sources and compiled Obsidian wiki
-├── .claude/rules/             <- path-scoped domain rules
-├── .obsidian/                 <- portable vault settings only
-├── setup.ps1                  <- native Windows installer
-└── setup.sh                   <- POSIX installer
+Prosperity Workspace/
+├── pm-os/                     <- this workspace, private to you
+│   ├── AGENTS.md              <- Codex agency rules
+│   ├── CLAUDE.md              <- Claude Code entry point
+│   ├── .pm/
+│   │   ├── config.json        <- workspace marker
+│   │   └── clients.json       <- client registry (pointers only)
+│   ├── team/                  <- personal workspaces and pre-engagement sales
+│   │   ├── _example-team-member/
+│   │   └── sales/
+│   ├── agency/                <- shared research, playbooks, templates, plans, and outputs
+│   ├── knowledge/             <- raw sources and compiled Obsidian wiki
+│   ├── .claude/rules/         <- path-scoped domain rules
+│   ├── .obsidian/             <- portable vault settings only
+│   ├── setup.ps1              <- native Windows installer
+│   └── setup.sh               <- POSIX installer
+├── pm-skills/                 <- shared team automation
+└── pm-<slug>/          <- one repository per client
 ```
 
-Every client starts with four living business documents: `business-context.md`, `offer.md`, `customer-avatar.md`, and `tone-of-voice.md`. Read all four plus the client's `AGENTS.md` or `CLAUDE.md` before producing client work.
+Each client repository carries its own `AGENTS.md`, its own path-scoped `.claude/rules/`, and four living business documents: `business-context.md`, `offer.md`, `customer-avatar.md`, and `tone-of-voice.md`. Read all four plus that repo's `AGENTS.md` before producing client work.
+
+To find a client's repository, use the resolver rather than guessing a path:
+
+```bash
+python3 ../pm-skills/_shared/scripts/pm_paths.py list
+python3 ../pm-skills/_shared/scripts/pm_paths.py resolve <slug>
+```
 
 ## Core features
 
@@ -175,11 +191,17 @@ The same workspace supports both clients. Codex reads `AGENTS.md` and discovers 
 
 ### `pm-skills`, private workspaces
 
-Every teammate has a private `pm-os` containing their client and personal context while using the same separately maintained `pm-skills` repository. New skills are discovered dynamically and linked by setup or `/pm-start`.
+Every teammate has a private `pm-os` containing their personal context and client registry, while using the same separately maintained `pm-skills` repository. New skills are discovered dynamically and linked by setup or `/pm-start`.
+
+### Collaborative client repositories
+
+Each client is a separate private repository, shared with exactly the people who need it. Two teammates working the same client work in the same repo — `/pm-new-project` checks the organisation before creating anything, so a client that already exists gets cloned and linked rather than duplicated.
+
+`/pm-start` reconciles the registry against what is actually on disk and reports anything unregistered, missing, or still in the legacy layout.
 
 ### Structured client operations
 
-Each client receives dedicated areas for business context, assets, staged content, SEO, GEO, strategy, research, meetings, reporting, Pinterest, dashboards, and tasks. The routing rules keep client-facing outputs separate from raw inputs and internal work.
+Each client repository receives dedicated areas for business context, assets, staged content, SEO, GEO, strategy, research, meetings, reporting, Pinterest, dashboards, and tasks, plus its own path-scoped rules so routing behaves identically whether or not `pm-os` is open alongside it.
 
 ### Staged content production
 
@@ -215,16 +237,18 @@ bash setup.sh --check
 
 The tested skills revision is recorded in `skills-lock.json`. It is a compatibility marker, not a vendored dependency lock; the installer normally uses the sibling checkout you control.
 
-For a repository-only health check, run `./scripts/verify-template.ps1`. This validates the starter structure, JSON files, instruction pairing, submodule removal, required client skeleton, and stale v1 references.
+For a repository-only health check, run `./scripts/verify-template.ps1`. This validates the starter structure, JSON files, instruction pairing, submodule removal, the absence of a legacy `clients/` folder, and stale v1 references.
 
 If the workspace or `pm-skills` folder moves, rerun setup to repair links. The installer never overwrites a real file or directory in a skills destination; it stops and tells you which collision needs manual review.
 
 ## Security and ownership
 
-- Keep every personal OS workspace repository private: it will contain confidential client information.
+- Keep every personal OS workspace repository private, and every client repository private.
+- **The client repo is the access boundary.** Anyone with access to a client repository can see everything in it. Grant access per person, and keep anything a client should never see out of their repo entirely.
 - Never copy `.env`, memory, client files, or machine-local settings between team members.
-- Commit reusable harness improvements to the template; commit shared automation to `pm-skills`; keep client and personal context in your private workspace.
-- Review `git status` before every push.
+- Never copy one client's material into another client's repository, and never back into `pm-os`.
+- Commit reusable harness improvements to the template; shared automation to `pm-skills`; client work to that client's repository; personal context to your private workspace.
+- Review `git status` before every push — in each repository you touched.
 
 ## Optional dependencies
 

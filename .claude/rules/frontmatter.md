@@ -2,8 +2,6 @@
 paths:
   - "knowledge/**"
   - "agency/research/**"
-  - "clients/*/research/**"
-  - "clients/*/strategy/**"
 ---
 
 # Standard Frontmatter (Uniform Record Schema)
@@ -33,7 +31,7 @@ status: current
 
 ## Scope rules
 
-- Applies to **new** docs in `knowledge/`, `agency/research/`, `clients/*/research/`, `clients/*/strategy/`. Skills that emit docs (rdg-wiki-ingest, pm-codify, pm-meeting-summariser, brief generators) should emit this block.
+- Applies to **new** docs in `knowledge/` and `agency/research/`. The same block applies to `research/` and `strategy/` inside each client repository, where it is enforced by that repo's own copy of this rule. Skills that emit docs (rdg-wiki-ingest, pm-codify, pm-meeting-summariser, brief generators) should emit this block.
 - Do **NOT** hand-backfill existing docs. The indexer auto-stubs `description` from the H1 + first paragraph and marks it `stub: true` in the catalog; stubs get upgraded opportunistically (when a doc is next edited) or via a targeted LLM pass.
 - This block complements — does not replace — existing conventions: `YYYY-MM-DD-` filename prefixes for dated research, `**Date:**` in the body, wikilinks in content.
 - Never put wikilinks inside frontmatter values other than `superseded_by`.
