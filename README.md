@@ -11,7 +11,7 @@ This repository is a starter, not a shared client-data repository. Each teammate
 | `pm-os-template` | Clean starter maintained for the team | Shared, contains no client data |
 | `pm-os` | A teammate's working OS created from the template | Private to that teammate |
 | `pm-skills` | Shared Prosperity automation | Separate shared repository |
-| `pm-client-<slug>` | One repository per client — all of that client's work | Private, access granted per person |
+| `pm-<slug>` | One repository per client — all of that client's work | Private, access granted per person |
 
 `pm-os` is the canonical workspace and product name. Older installations may still be named `pm-brain`; `/pm-start` recognises that deprecated name for compatibility, but all new workspaces should use `pm-os`.
 
@@ -171,7 +171,7 @@ Prosperity Workspace/
 │   ├── setup.ps1              <- native Windows installer
 │   └── setup.sh               <- POSIX installer
 ├── pm-skills/                 <- shared team automation
-└── pm-client-<slug>/          <- one repository per client
+└── pm-<slug>/          <- one repository per client
 ```
 
 Each client repository carries its own `AGENTS.md`, its own path-scoped `.claude/rules/`, and four living business documents: `business-context.md`, `offer.md`, `customer-avatar.md`, and `tone-of-voice.md`. Read all four plus that repo's `AGENTS.md` before producing client work.

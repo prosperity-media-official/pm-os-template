@@ -22,7 +22,7 @@ Prosperity Workspace/
 │   ├── .claude/rules/        path-scoped domain rules
 │   └── .obsidian/            portable vault configuration
 ├── pm-skills/                shared team automation
-└── pm-client-<slug>/         one repository per client
+└── pm-<slug>/                one repository per client
 ```
 
 **Client work never lives in this repository.** Each client has its own repository, a flat sibling of `pm-os`, containing `AGENTS.md`, `CLAUDE.md`, its own `.claude/rules/`, `business/`, `assets/`, `content/`, `seo/`, `geo/`, `strategy/`, `research/`, `meetings/`, `reporting/`, `pinterest/`, `dashboard/`, and `tasks/`.
