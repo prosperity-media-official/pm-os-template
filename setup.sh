@@ -29,7 +29,7 @@ if ! command -v git >/dev/null 2>&1; then
   else bash "$WORKSPACE_ROOT/scripts/bootstrap-dependencies.sh" "$SKILLS_DIR"; fi
 fi
 
-for required in AGENTS.md CLAUDE.md clients team agency knowledge; do
+for required in AGENTS.md CLAUDE.md .pm/config.json team agency knowledge; do
   [[ -e "$WORKSPACE_ROOT/$required" ]] || { printf 'ERROR: Workspace is missing required path: %s\n' "$required" >&2; exit 1; }
 done
 

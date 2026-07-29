@@ -19,7 +19,7 @@ if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
     & (Join-Path $WorkspaceRoot 'scripts\bootstrap-dependencies.ps1') -SkillsDir $SkillsDir -CheckOnly:$CheckOnly
 }
 
-foreach ($required in @('AGENTS.md', 'CLAUDE.md', 'clients', 'team', 'agency', 'knowledge')) {
+foreach ($required in @('AGENTS.md', 'CLAUDE.md', '.pm/config.json', 'team', 'agency', 'knowledge')) {
     if (-not (Test-Path -LiteralPath (Join-Path $WorkspaceRoot $required))) {
         throw "Workspace is missing required path: $required"
     }
