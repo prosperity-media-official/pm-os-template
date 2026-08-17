@@ -41,3 +41,6 @@ MEMORY/
 # pm_index artifacts: knowledge/.index/catalog.jsonl IS committed; local dbs are not
 /knowledge/.index/*.db
 /knowledge/.index/*.db-*
+
+# graphify knowledge-graph output (regenerable by pm_graph.py; the global graph lives in ~/.graphify)
+graphify-out/

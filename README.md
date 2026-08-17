@@ -26,6 +26,7 @@ If you have an older workspace with a `clients/` folder, run `/pm-migrate-client
 - Scoped workflow rules for sales, the knowledge wiki, and document frontmatter — client-facing rules for content, SEO, GEO, reporting, and Pinterest ship inside each client repository so they travel with the work
 - An Obsidian-ready vault with machine-specific state excluded
 - Cross-platform installers that automatically clone the separate `pm-skills` repository and install all skills into both AI runtimes
+- A local knowledge base (`pm_search.py` / `pm_index.py`) and per-repo knowledge graphs (`pm_graph.py` on graphify) — search finds what says X, the graph finds what connects to X
 - A reusable team-member skeleton with no real client or personal data
 
 ## Prerequisites
@@ -35,7 +36,7 @@ Required:
 - Codex, Claude Code, or both
 - On Windows, PowerShell 7 or Windows PowerShell 5.1
 
-Git is needed to obtain the initial template, but the AI setup flow can install it before cloning when a trusted system package manager is available. After the template is present, setup automatically bootstraps Git, GitHub CLI, Python 3, Node.js/npm, Bun, the common Python packages, and skill-local Node packages. Put credentials only in the workspace-root `.env`; never commit it. Authenticated services still require the user to complete their own sign-in or supply their own API key.
+Git is needed to obtain the initial template, but the AI setup flow can install it before cloning when a trusted system package manager is available. After the template is present, setup automatically bootstraps Git, GitHub CLI, Python 3, Node.js/npm, Bun, the common Python packages, skill-local Node packages, and (best-effort) the `graphify` CLI for knowledge graphs. Put credentials only in the workspace-root `.env`; never commit it. Authenticated services still require the user to complete their own sign-in or supply their own API key.
 
 ## Quick start
 
@@ -214,6 +215,13 @@ Scoped rules cover keyword research, topical maps, technical audits, structured 
 ### Obsidian knowledge system
 
 `pm-os` is an Obsidian-ready vault. Agency resources live under `agency/`; immutable evidence lives under `knowledge/raw/`; maintained synthesis and indexes live under `knowledge/wiki/`.
+
+### Knowledge search and graph (Graph Engineering)
+
+Two retrieval layers ship pre-wired, both stdlib Python shims in `.claude/lib/` that dispatch to the canonical scripts in `pm-skills/_shared/scripts/`:
+
+- `pm_search.py` / `pm_index.py` — local hybrid search over every markdown file (built by setup, refreshed by `/pm-start` and `/pm-end`).
+- `pm_graph.py` — one graphify knowledge graph per repository (this workspace plus every linked client repo), stored in a gitignored `graphify-out/`. `/pm-end` refreshes changed repos in the background; `/pm-start` reports freshness; `pm_graph.py query "<question>"` answers relationship questions. Extraction runs on the Claude plan (`claude -p`, Haiku) — no API key. `.graphifyignore` controls what is graphed. Setup installs `graphify` best-effort (`uv tool install graphifyy`); when it is absent every graph command degrades to a notice.
 
 ### Self-improving operating system
 

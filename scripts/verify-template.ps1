@@ -20,6 +20,10 @@ $required = @(
     '.claude/rules/sales-rules.md',
     '.pm/config.json',
     '.pm/clients.json',
+    '.claude/lib/pm_index.py',
+    '.claude/lib/pm_search.py',
+    '.claude/lib/pm_graph.py',
+    '.graphifyignore',
     'team/_example-team-member/AGENTS.md',
     'knowledge/wiki/_log.md'
 )

@@ -119,3 +119,11 @@ if [[ "$CHECK_ONLY" -eq 0 ]] && command -v python3 >/dev/null 2>&1 && [[ -f "$WO
       && python3 .claude/lib/pm_index.py sync-indexes ) \
     || printf 'WARN: knowledge index build failed — run manually: python3 .claude/lib/pm_index.py build\n'
 fi
+
+# Knowledge graph (graphify via pm_graph.py): report only. The first build takes 5-60 min and
+# bills the Claude plan (claude -p, Haiku), so it is a deliberate step, not part of setup.
+if [[ "$CHECK_ONLY" -eq 0 ]] && command -v python3 >/dev/null 2>&1 && [[ -f "$WORKSPACE_ROOT/.claude/lib/pm_graph.py" ]]; then
+  printf '\nKnowledge graph status (build later with: python3 .claude/lib/pm_graph.py build):\n'
+  ( cd "$WORKSPACE_ROOT" && python3 .claude/lib/pm_graph.py status ) \
+    || printf 'WARN: pm_graph status failed — graphs are optional; see AGENTS.md "Finding information"\n'
+fi

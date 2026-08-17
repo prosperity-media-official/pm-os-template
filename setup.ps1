@@ -128,4 +128,14 @@ if (-not $CheckOnly) {
             Pop-Location
         }
     }
+    # Knowledge graph (graphify via pm_graph.py): report only. The first build takes 5-60 min and
+    # bills the Claude plan (claude -p, Haiku), so it is a deliberate step, not part of setup.
+    $grapher = Join-Path $WorkspaceRoot '.claude\lib\pm_graph.py'
+    if ($python -and (Test-Path -LiteralPath $grapher)) {
+        Write-Host "`nKnowledge graph status (build later with: python .claude\lib\pm_graph.py build):"
+        Push-Location $WorkspaceRoot
+        try { & $python.Source $grapher status }
+        catch { Write-Warning "pm_graph status failed - graphs are optional; see AGENTS.md 'Finding information'" }
+        finally { Pop-Location }
+    }
 }

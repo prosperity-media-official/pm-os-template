@@ -62,6 +62,20 @@ for i in "${!python_packages[@]}"; do
   fi
 done
 
+# graphify (knowledge graphs, .claude/lib/pm_graph.py) — optional, best-effort, never fatal.
+if ! command -v graphify >/dev/null 2>&1; then
+  if [[ "$CHECK_ONLY" == '--check' ]]; then
+    printf 'WARNING: graphify is not installed; knowledge graphs are skipped until you run: uv tool install graphifyy\n' >&2
+  else
+    printf 'Installing graphify (graphifyy) for knowledge graphs...\n'
+    if command -v uv >/dev/null 2>&1; then uv tool install graphifyy
+    elif command -v pipx >/dev/null 2>&1; then pipx install graphifyy
+    else python3 -m pip install --user --disable-pip-version-check graphifyy || \
+         python3 -m pip install --user --break-system-packages --disable-pip-version-check graphifyy; fi \
+      || printf 'WARNING: graphify install failed; knowledge graphs stay off until you run: uv tool install graphifyy\n' >&2
+  fi
+fi
+
 if [[ -d "$SKILLS_DIR" ]]; then
   node_projects=(pm-aimode-journey/Tools pm-schema-optimisation/scripts)
   for relative in "${node_projects[@]}"; do

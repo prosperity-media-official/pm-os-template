@@ -72,6 +72,22 @@ Pass `--scope` whenever the client or domain is known. `--scope clients/<slug>` 
 
 The index behind it: `python3 .claude/lib/pm_index.py build` (incremental — run it when `pm_index.py status` reports stale, and at session end). `pm_index.py sync-indexes` maintains wiki `_index.md` stats and root `MEMORY.md` — never hand-count index stats. New knowledge docs carry the standard frontmatter in `.claude/rules/frontmatter.md`; `description` (the one-line question the doc answers) is what makes search work.
 
+### Knowledge graph (Graph Engineering)
+
+Search answers "what says X"; the graph answers "what connects to X". Every repo (this workspace and each linked client repo) carries its own graphify knowledge graph in a gitignored `graphify-out/`, so client knowledge never mixes across repos.
+
+```bash
+python3 .claude/lib/pm_graph.py query "<question>" [--scope <client-slug> | --global]  # relationship questions
+python3 .claude/lib/pm_graph.py status                                              # freshness per repo (0.5 s)
+python3 .claude/lib/pm_graph.py build --all --changed [--parallel 4]                # incremental refresh
+python3 .claude/lib/pm_graph.py init <client-slug>                                  # first-time: .graphifyignore + gitignore
+```
+
+- **Cadence:** `/pm-end` refreshes changed repos in the background after the push; `/pm-start` reports freshness. Extraction is commit-gated, so uncommitted edits are picked up at the next `pm-end`.
+- **Cost:** the default backend is `claude-cli` (Haiku via `claude -p`), which bills the Claude plan — no API key. First build of a repo: 5–60 min; incremental: 1–5 min; `--backend gemini` is a labelled fallback that reads `GEMINI_API_KEY` from `.env`.
+- **Scope control:** `.graphifyignore` at the repo root (gitignore syntax) keeps agent runtimes, raw data dumps and binaries out of the graph. Edit it, then rebuild.
+- **Optional:** if `graphify` is not on `PATH` (`uv tool install graphifyy`), every command degrades to a one-line notice — it is never a blocker.
+
 ## Folder routing
 
 State the proposed destination before creating a substantial file.

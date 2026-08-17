@@ -1,0 +1,30 @@
+# pm_graph: graph knowledge content only; agent runtimes are not knowledge
+.claude/
+.agents/
+.codex/
+.qwen/
+.serena/
+.obsidian/
+.vscode/
+node_modules/
+__pycache__/
+knowledge/.index/
+assets/
+tmp/
+Plans/
+*.csv
+*.jsonl
+*.json
+*.db
+# scraped pages, dashboards, prototypes: html is a rendering, the .md source is the knowledge
+*.html
+# binaries: images/PDF/office are assets or duplicates of .md sources (pm-codify)
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.svg
+*.pdf
+*.docx
+*.xlsx

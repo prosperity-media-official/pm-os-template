@@ -93,6 +93,22 @@ foreach ($entry in $Manifest.pythonPackages) {
     }
 }
 
+# Python CLI tools (graphify for knowledge graphs) — optional, best-effort, never fatal.
+foreach ($entry in $Manifest.pythonTools) {
+    $command = [string]$entry.command
+    $package = [string]$entry.package
+    if (Get-Command $command -ErrorAction SilentlyContinue) { continue }
+    if ($CheckOnly) { Write-Warning "$command is not installed; knowledge graphs are skipped until you run: uv tool install $package"; continue }
+    Write-Host "Installing $package (for $command)..."
+    $installed = $false
+    if (Get-Command uv -ErrorAction SilentlyContinue) { $installed = Invoke-Probe { & uv tool install $package } }
+    elseif (Get-Command pipx -ErrorAction SilentlyContinue) { $installed = Invoke-Probe { & pipx install $package } }
+    elseif ($python -eq 'py') { $installed = Invoke-Probe { & py -3 -m pip install --user --disable-pip-version-check $package } }
+    elseif ($python) { $installed = Invoke-Probe { & $python -m pip install --user --disable-pip-version-check $package } }
+    Refresh-ProcessPath
+    if (-not $installed) { Write-Warning "$package install failed; knowledge graphs stay off until you run: uv tool install $package" }
+}
+
 if (Test-Path -LiteralPath $SkillsDir) {
     foreach ($relative in $Manifest.nodeProjects) {
         $project = Join-Path $SkillsDir ($relative -replace '/', [IO.Path]::DirectorySeparatorChar)
