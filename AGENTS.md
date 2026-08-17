@@ -80,10 +80,10 @@ Search answers "what says X"; the graph answers "what connects to X". Every repo
 python3 .claude/lib/pm_graph.py query "<question>" [--scope <client-slug> | --global]  # relationship questions
 python3 .claude/lib/pm_graph.py status                                              # freshness per repo (0.5 s)
 python3 .claude/lib/pm_graph.py build --all --changed [--parallel 4]                # incremental refresh
-python3 .claude/lib/pm_graph.py init <client-slug>                                  # first-time: .graphifyignore + gitignore
+python3 .claude/lib/pm_graph.py build --scope <client-slug>                          # deliberate first build (writes .graphifyignore itself)
 ```
 
-- **Cadence:** `/pm-end` refreshes changed repos in the background after the push; `/pm-start` reports freshness. Extraction is commit-gated, so uncommitted edits are picked up at the next `pm-end`.
+- **Cadence:** `/pm-end` refreshes existing graphs whose repo has new commits, in the background after the push; `/pm-start` reports freshness. A repo's first build is a deliberate `build --scope <tag>` (30–80 min) — the automatic pass never starts one.
 - **Cost:** the default backend is `claude-cli` (Haiku via `claude -p`), which bills the Claude plan — no API key. First build of a repo: 5–60 min; incremental: 1–5 min; `--backend gemini` is a labelled fallback that reads `GEMINI_API_KEY` from `.env`.
 - **Scope control:** `.graphifyignore` at the repo root (gitignore syntax) keeps agent runtimes, raw data dumps and binaries out of the graph. Edit it, then rebuild.
 - **Optional:** if `graphify` is not on `PATH` (`uv tool install graphifyy`), every command degrades to a one-line notice — it is never a blocker.
