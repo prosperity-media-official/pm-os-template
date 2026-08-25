@@ -98,7 +98,7 @@ done
 if [[ "$CHECK_ONLY" -eq 0 ]]; then
   printf '\nInstalled %s entries into both ~/.claude/skills and ~/.codex/skills.\n' "${#SKILL_SOURCES[@]}"
   printf 'Workspace: %s\nSkills:    %s\n' "$WORKSPACE_ROOT" "$SKILLS_DIR"
-  printf 'Restart Codex/Claude Code, then run /pm-start and /pm-onboard.\n'
+  printf 'Restart Codex/Claude Code, then run /pm-os-start and /pm-os-onboard.\n'
 else
   printf 'OK: %s skill entries verified in both runtimes.\n' "${#SKILL_SOURCES[@]}"
 fi

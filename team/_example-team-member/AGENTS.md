@@ -1,6 +1,6 @@
 # Example Team Member — Personal Workspace
 
-Replace this file through `/pm-onboard`.
+Replace this file through `/pm-os-onboard`.
 
 ## Identity
 

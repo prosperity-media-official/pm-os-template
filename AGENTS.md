@@ -31,7 +31,7 @@ The repo is the access boundary. Separating clients this way lets a client be sh
 
 ## Client repositories
 
-`.pm/clients.json` maps each client slug to a path relative to this workspace. Each client repo identifies itself with `.pm/client.json`, which is what lets `/pm-start` discover repos the registry has not caught up with.
+`.pm/clients.json` maps each client slug to a path relative to this workspace. Each client repo identifies itself with `.pm/client.json`, which is what lets `/pm-os-start` discover repos the registry has not caught up with.
 
 ```bash
 python3 "<pm-skills>/_shared/scripts/pm_paths.py" list            # registered clients
@@ -39,9 +39,9 @@ python3 "<pm-skills>/_shared/scripts/pm_paths.py" resolve <slug>  # slug -> real
 python3 "<pm-skills>/_shared/scripts/pm_paths.py" reconcile       # registry vs disk
 ```
 
-- Add a client with `/pm-new-project` — it checks the organisation for an existing repo first, scaffolds, commits, and registers.
-- `/pm-start` reports anything unregistered, missing, or still legacy.
-- If a `clients/` folder still exists here, this workspace predates v2. Run `/pm-migrate-clients`.
+- Add a client with `/pm-os-new-project` — it checks the organisation for an existing repo first, scaffolds, commits, and registers.
+- `/pm-os-start` reports anything unregistered, missing, or still legacy.
+- If a `clients/` folder still exists here, this workspace predates v2. Run `/pm-os-migrate-clients`.
 
 Never resolve a client path by hand or assume a folder location; always go through the resolver.
 
@@ -83,7 +83,7 @@ python3 .claude/lib/pm_graph.py build --all --changed [--parallel 4]            
 python3 .claude/lib/pm_graph.py build --scope <client-slug>                          # deliberate first build (writes .graphifyignore itself)
 ```
 
-- **Cadence:** `/pm-end` refreshes existing graphs whose repo has new commits, in the background after the push; `/pm-start` reports freshness. A repo's first build is a deliberate `build --scope <tag>` (30–80 min) — the automatic pass never starts one.
+- **Cadence:** `/pm-os-end` refreshes existing graphs whose repo has new commits, in the background after the push; `/pm-os-start` reports freshness. A repo's first build is a deliberate `build --scope <tag>` (30–80 min) — the automatic pass never starts one.
 - **Cost:** the default backend is `claude-cli` (Haiku via `claude -p`), which bills the Claude plan — no API key. First build of a repo: 5–60 min; incremental: 1–5 min; `--backend gemini` is a labelled fallback that reads `GEMINI_API_KEY` from `.env`.
 - **Scope control:** `.graphifyignore` at the repo root (gitignore syntax) keeps agent runtimes, raw data dumps and binaries out of the graph. Edit it, then rebuild.
 - **Optional:** if `graphify` is not on `PATH` (`uv tool install graphifyy`), every command degrades to a one-line notice — it is never a blocker.
@@ -150,16 +150,16 @@ When the user directly corrects the system, report where the correction was reco
 
 ## Adding teammates and clients
 
-- Run `/pm-onboard` to scaffold `team/<name>/`.
-- Run `/pm-new-project` to create a client's own repository and link it here. It checks the `prosperity-media-official` organisation first — if a teammate already onboarded that client, you join their repo rather than creating a second one.
-- Run `/pm-migrate-clients` once if this workspace still has a legacy `clients/` folder.
+- Run `/pm-os-onboard` to scaffold `team/<name>/`.
+- Run `/pm-os-new-project` to create a client's own repository and link it here. It checks the `prosperity-media-official` organisation first — if a teammate already onboarded that client, you join their repo rather than creating a second one.
+- Run `/pm-os-migrate-clients` once if this workspace still has a legacy `clients/` folder.
 - Use the `_example-*` folders only as references; do not put real information into them.
 
 ## Learned preferences
 
 <!-- Add only confirmed agency-wide preferences. Keep one concise line per preference. -->
 
-- `/pm-start` must treat `pm-skills` as a separate sibling repository and explicitly prompt first-time users to download it and install all skill links for Claude Code, ChatGPT/Codex, or both.
+- `/pm-os-start` must treat `pm-skills` as a separate sibling repository and explicitly prompt first-time users to download it and install all skill links for Claude Code, ChatGPT/Codex, or both.
 - The canonical workspace and product name is `pm-os` / **Prosperity OS**. Use `pm-brain` only when documenting or detecting a legacy installation.
 - Present a copy-paste AI prompt as the primary `pm-skills` installation method in onboarding documentation; keep direct setup commands as a manual fallback.
 - First-time setup must automatically bootstrap supported runtimes and package dependencies, then report only credentials or interactive authentication that still require the user.

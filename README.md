@@ -13,11 +13,11 @@ This repository is a starter, not a shared client-data repository. Each teammate
 | `pm-skills` | Shared Prosperity automation | Separate shared repository |
 | `pm-<slug>` | One repository per client — all of that client's work | Private, access granted per person |
 
-`pm-os` is the canonical workspace and product name. Older installations may still be named `pm-brain`; `/pm-start` recognises that deprecated name for compatibility, but all new workspaces should use `pm-os`.
+`pm-os` is the canonical workspace and product name. Older installations may still be named `pm-brain`; `/pm-os-start` recognises that deprecated name for compatibility, but all new workspaces should use `pm-os`.
 
 **Client work lives in its own repository, never inside `pm-os`.** The repo is the access boundary: a client can be shared with a teammate, a contractor, or the client themselves without exposing the rest of your workspace. `pm-os` keeps pointers only, in `.pm/clients.json`.
 
-If you have an older workspace with a `clients/` folder, run `/pm-migrate-clients` to split each client into its own repository.
+If you have an older workspace with a `clients/` folder, run `/pm-os-migrate-clients` to split each client into its own repository.
 
 ## What is included
 
@@ -51,7 +51,7 @@ Create a new private GitHub repository named pm-os under my authenticated GitHub
 
 Then run the correct installer for my environment from the new pm-os root: setup.ps1 on native Windows, or setup.sh on macOS, Linux, WSL, or Git Bash. Allow it to use the trusted system package manager when required. The installer must automatically install missing supported prerequisites, clone https://github.com/prosperity-media-official/pm-skills as a separate sibling repository named pm-skills, install all common Python and Node packages, install or symlink all pm-* skills and the shared toolchain for both Claude Code and ChatGPT/Codex, and verify every dependency and link.
 
-If GitHub authentication, the destination owner, or the local parent folder cannot be detected safely, ask me only for the missing value. Do not overwrite an existing pm-os or pm-skills folder, do not make either personal repository public, and do not place pm-skills inside pm-os. When setup is complete, report the local paths and repository URLs, tell me whether I need to restart my AI client, run /pm-start to verify the installation, and then guide me through /pm-onboard.
+If GitHub authentication, the destination owner, or the local parent folder cannot be detected safely, ask me only for the missing value. Do not overwrite an existing pm-os or pm-skills folder, do not make either personal repository public, and do not place pm-skills inside pm-os. When setup is complete, report the local paths and repository URLs, tell me whether I need to restart my AI client, run /pm-os-start to verify the installation, and then guide me through /pm-os-onboard.
 ```
 
 The AI will use your existing GitHub authentication where available. If needed, it will pause so you can sign in or choose the account or organisation that should own your private `pm-os` repository.
@@ -82,7 +82,7 @@ Install the Prosperity Media skills for this pm-os workspace from https://github
 
 Keep pm-skills as a separate sibling repository beside pm-os; never add it as a submodule or clone it inside pm-os. If a valid sibling pm-skills checkout already exists, reuse it and safely update it. Otherwise, clone it into a sibling folder named pm-skills.
 
-Detect whether I am using native Windows, macOS, Linux, WSL, or Git Bash, then run the correct pm-os installer. Automatically install all missing supported prerequisites using winget, Homebrew, apt, dnf, yum, pacman, npm, or pip as appropriate. This includes Git, GitHub CLI where available, Python 3, Node.js/npm, Bun, openpyxl, python-docx, requests, lxml, and all package.json dependencies inside pm-skills. Ask once before any administrator elevation. Install or symlink every pm-* skill and the required _shared toolchain for both Claude Code and ChatGPT/Codex. Do not overwrite real files or directories when repairing links. Run the dependency, installer, and /pm-start health checks, report the pm-os and pm-skills paths and every installed destination, and tell me whether I need to restart either AI client.
+Detect whether I am using native Windows, macOS, Linux, WSL, or Git Bash, then run the correct pm-os installer. Automatically install all missing supported prerequisites using winget, Homebrew, apt, dnf, yum, pacman, npm, or pip as appropriate. This includes Git, GitHub CLI where available, Python 3, Node.js/npm, Bun, openpyxl, python-docx, requests, lxml, and all package.json dependencies inside pm-skills. Ask once before any administrator elevation. Install or symlink every pm-* skill and the required _shared toolchain for both Claude Code and ChatGPT/Codex. Do not overwrite real files or directories when repairing links. Run the dependency, installer, and /pm-os-start health checks, report the pm-os and pm-skills paths and every installed destination, and tell me whether I need to restart either AI client.
 
 If GitHub authentication or the intended parent folder cannot be detected safely, ask me only for the missing value before continuing.
 ```
@@ -124,13 +124,13 @@ To use a different skills location, set `PM_SKILLS_DIR` first. To update an exis
 
 ### 3. Personalise the workspace
 
-1. Run `/pm-onboard` to create `team/<your-name>/`.
-2. Run `/pm-new-project` to create your first client repository beside `pm-os`.
+1. Run `/pm-os-onboard` to create `team/<your-name>/`.
+2. Run `/pm-os-new-project` to create your first client repository beside `pm-os`.
 3. Delete the `_example-*` folders after you no longer need them.
 4. Optionally open the folder as an Obsidian vault.
-5. Optionally run `/pm-install-command-centre` after onboarding to install the per-user dashboard.
+5. Optionally run `/pm-os-install-command-centre` after onboarding to install the per-user dashboard.
 
-You can also invoke `/pm-start` from either supported AI client. On a first run it detects whether the separate `pm-skills` checkout exists, prompts before downloading it, asks whether to install for Claude Code, ChatGPT/Codex, or both, and validates every link before reporting success.
+You can also invoke `/pm-os-start` from either supported AI client. On a first run it detects whether the separate `pm-skills` checkout exists, prompts before downloading it, asks whether to install for Claude Code, ChatGPT/Codex, or both, and validates every link before reporting success.
 
 ### 4. Recommended first-day sequence
 
@@ -143,11 +143,11 @@ Paste the AI prompt to install pm-skills
         ↓
 Restart Claude Code or ChatGPT/Codex
         ↓
-Run /pm-start to verify the installation
+Run /pm-os-start to verify the installation
         ↓
-Run /pm-onboard to create your team workspace
+Run /pm-os-onboard to create your team workspace
         ↓
-Run /pm-new-project to create your first client repository
+Run /pm-os-new-project to create your first client repository
 ```
 
 After onboarding, the normal working pattern is: open `pm-os`, name the client or task, let the AI resolve and load that client's repository and business context, run the appropriate `pm-*` skill, review the filed output, then commit the client work to **that client's repository** and any workspace changes to `pm-os`.
@@ -192,13 +192,13 @@ The same workspace supports both clients. Codex reads `AGENTS.md` and discovers 
 
 ### `pm-skills`, private workspaces
 
-Every teammate has a private `pm-os` containing their personal context and client registry, while using the same separately maintained `pm-skills` repository. New skills are discovered dynamically and linked by setup or `/pm-start`.
+Every teammate has a private `pm-os` containing their personal context and client registry, while using the same separately maintained `pm-skills` repository. New skills are discovered dynamically and linked by setup or `/pm-os-start`.
 
 ### Collaborative client repositories
 
-Each client is a separate private repository, shared with exactly the people who need it. Two teammates working the same client work in the same repo — `/pm-new-project` checks the organisation before creating anything, so a client that already exists gets cloned and linked rather than duplicated.
+Each client is a separate private repository, shared with exactly the people who need it. Two teammates working the same client work in the same repo — `/pm-os-new-project` checks the organisation before creating anything, so a client that already exists gets cloned and linked rather than duplicated.
 
-`/pm-start` reconciles the registry against what is actually on disk and reports anything unregistered, missing, or still in the legacy layout.
+`/pm-os-start` reconciles the registry against what is actually on disk and reports anything unregistered, missing, or still in the legacy layout.
 
 ### Structured client operations
 
@@ -220,8 +220,8 @@ Scoped rules cover keyword research, topical maps, technical audits, structured 
 
 Two retrieval layers ship pre-wired, both stdlib Python shims in `.claude/lib/` that dispatch to the canonical scripts in `pm-skills/_shared/scripts/`:
 
-- `pm_search.py` / `pm_index.py` — local hybrid search over every markdown file (built by setup, refreshed by `/pm-start` and `/pm-end`).
-- `pm_graph.py` — one graphify knowledge graph per repository (this workspace plus every linked client repo), stored in a gitignored `graphify-out/`. `/pm-end` refreshes changed repos in the background; `/pm-start` reports freshness; `pm_graph.py query "<question>"` answers relationship questions. Extraction runs on the Claude plan (`claude -p`, Haiku) — no API key. `.graphifyignore` controls what is graphed. Setup installs `graphify` best-effort (`uv tool install graphifyy`); when it is absent every graph command degrades to a notice.
+- `pm_search.py` / `pm_index.py` — local hybrid search over every markdown file (built by setup, refreshed by `/pm-os-start` and `/pm-os-end`).
+- `pm_graph.py` — one graphify knowledge graph per repository (this workspace plus every linked client repo), stored in a gitignored `graphify-out/`. `/pm-os-end` refreshes changed repos in the background; `/pm-os-start` reports freshness; `pm_graph.py query "<question>"` answers relationship questions. Extraction runs on the Claude plan (`claude -p`, Haiku) — no API key. `.graphifyignore` controls what is graphed. Setup installs `graphify` best-effort (`uv tool install graphifyy`); when it is absent every graph command degrades to a notice.
 
 ### Self-improving operating system
 

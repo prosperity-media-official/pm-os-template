@@ -77,7 +77,7 @@ if ! command -v graphify >/dev/null 2>&1; then
 fi
 
 if [[ -d "$SKILLS_DIR" ]]; then
-  node_projects=(pm-aimode-journey/Tools pm-schema-optimisation/scripts)
+  node_projects=(pm-geo-aimode-journey/Tools pm-seo-schema-optimisation/scripts)
   for relative in "${node_projects[@]}"; do
     project="$SKILLS_DIR/$relative"
     [[ -f "$project/package.json" ]] || continue
