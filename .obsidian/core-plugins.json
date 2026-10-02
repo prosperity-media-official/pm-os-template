@@ -11,5 +11,6 @@
   "templates",
   "command-palette",
   "bookmarks",
-  "bases"
+  "bases",
+  "webviewer"
 ]

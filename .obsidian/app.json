@@ -2,5 +2,21 @@
   "alwaysUpdateLinks": true,
   "newFileLocation": "current",
   "showUnsupportedFiles": true,
-  "useMarkdownLinks": false
+  "useMarkdownLinks": false,
+  "userIgnoreFilters": [
+    "MEMORY/",
+    "/(^|\\/)(Plans|_[Pp]lans)(\\/|$)/",
+    "BRANCH-STATUS.md",
+    "CLAUDE.md",
+    "README.md",
+    "pm-brain.code-workspace",
+    "graphify-out/",
+    "dashboard/",
+    "data/",
+    "tmp/",
+    "AGENTS.md",
+    "PRODUCT.md",
+    "MEMORY.md",
+    "skills-lock.json"
+  ]
 }

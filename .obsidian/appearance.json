@@ -1,4 +1,14 @@
 {
   "baseFontSize": 16,
-  "showViewHeader": true
+  "showViewHeader": true,
+  "enabledCssSnippets": [
+    "hide-claude-folders",
+    "floating-search-bar",
+    "its-frontmatter",
+    "notion-cards",
+    "minimal-cards",
+    "extended-colorschemes",
+    "custom-background"
+  ],
+  "cssTheme": "Prosperity"
 }

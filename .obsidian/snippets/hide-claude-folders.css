@@ -1,0 +1,62 @@
+/* hide-claude-folders.css — hides Claude Code working files, generated
+   output and repo metadata from the Obsidian file explorer. Files stay on
+   disk and remain fully accessible to Claude Code; this only removes them
+   from the visual tree. Pair with `userIgnoreFilters` in app.json to also
+   exclude them from graph, search, quick switcher and link autocomplete.
+
+   Canonical copy: pm-command-centre/vault-config/snippets/ (install.sh merges
+   it into every vault). pm-brain/.obsidian/snippets/ is a byte-identical copy.
+
+   Hidden (top-level only — a nested folder with the same name is untouched):
+     folders: MEMORY, Plans, dashboard, data, tmp, graphify-out
+     files:   BRANCH-STATUS.md, CLAUDE.md, README.md, AGENTS.md, PRODUCT.md, MEMORY.md, skills-lock.json, *.code-workspace
+   To show one again, delete its line below (Obsidian reloads snippets live). */
+
+/* ── Folders ─────────────────────────────────────────────────────────────── */
+
+/* Whole folder container, children included (:has() — Obsidian 1.0+). */
+.nav-folder:has(> .nav-folder-title[data-path="MEMORY"]),
+.nav-folder:has(> .nav-folder-title[data-path="Plans"]),
+.nav-folder:has(> .nav-folder-title[data-path="dashboard"]),
+.nav-folder:has(> .nav-folder-title[data-path="data"]),
+.nav-folder:has(> .nav-folder-title[data-path="tmp"]),
+.nav-folder:has(> .nav-folder-title[data-path="graphify-out"]) {
+  display: none !important;
+}
+
+/* Belt-and-braces — the title itself, and any nested entry surfaced by a
+   search-result pane or backlink panel. */
+.nav-folder-title[data-path="MEMORY"],
+.nav-folder-title[data-path^="MEMORY/"],
+.nav-file-title[data-path^="MEMORY/"],
+.nav-folder-title[data-path="Plans"],
+.nav-folder-title[data-path^="Plans/"],
+.nav-file-title[data-path^="Plans/"],
+.nav-folder-title[data-path="dashboard"],
+.nav-folder-title[data-path^="dashboard/"],
+.nav-file-title[data-path^="dashboard/"],
+.nav-folder-title[data-path="data"],
+.nav-folder-title[data-path^="data/"],
+.nav-file-title[data-path^="data/"],
+.nav-folder-title[data-path="tmp"],
+.nav-folder-title[data-path^="tmp/"],
+.nav-file-title[data-path^="tmp/"],
+.nav-folder-title[data-path="graphify-out"],
+.nav-folder-title[data-path^="graphify-out/"],
+.nav-file-title[data-path^="graphify-out/"] {
+  display: none !important;
+}
+
+/* ── Top-level files ─────────────────────────────────────────────────────── */
+
+/* Repo metadata, agent routers and generated indexes — not knowledge work. */
+.nav-file-title[data-path="BRANCH-STATUS.md"],
+.nav-file-title[data-path="CLAUDE.md"],
+.nav-file-title[data-path="README.md"],
+.nav-file-title[data-path="AGENTS.md"],
+.nav-file-title[data-path="PRODUCT.md"],
+.nav-file-title[data-path="MEMORY.md"],
+.nav-file-title[data-path="skills-lock.json"],
+.nav-file-title[data-path$=".code-workspace"] {
+  display: none !important;
+}
