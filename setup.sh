@@ -95,6 +95,31 @@ for runtime in .claude .codex; do
   done
 done
 
+# The pm-os CLI on PATH. Bootstrap only: the CLI lives in pm-skills and is updated with it.
+PM_OS_BIN="${PM_OS_BIN:-$HOME/.local/bin}"
+PM_OS_LAUNCHER="$SKILLS_DIR/_shared/scripts/pm-os"
+if [[ -f "$PM_OS_LAUNCHER" ]]; then
+  if [[ "$CHECK_ONLY" -eq 1 ]]; then
+    [[ -x "$PM_OS_BIN/pm-os" ]] || printf 'WARNING: pm-os is not installed in %s; rerun setup.sh without --check.\n' "$PM_OS_BIN" >&2
+  else
+    mkdir -p "$PM_OS_BIN"
+    chmod +x "$PM_OS_LAUNCHER" 2>/dev/null || true
+    # Generated, not symlinked: Git Bash's `ln -s` copies the file, and the copy
+    # cannot then find its sibling pm_os.py.
+    if [[ -e "$PM_OS_BIN/pm-os" ]] && ! grep -q 'pm-os launcher installed by setup' "$PM_OS_BIN/pm-os" 2>/dev/null; then
+      printf 'WARNING: %s exists and was not written by setup; leaving it alone.\n' "$PM_OS_BIN/pm-os" >&2
+    else
+      printf '#!/bin/sh\n# pm-os launcher installed by setup; edit pm-skills/_shared/scripts/pm-os instead.\nexec "%s" "$@"\n' "$PM_OS_LAUNCHER" > "$PM_OS_BIN/pm-os"
+      chmod +x "$PM_OS_BIN/pm-os"
+      printf 'pm-os CLI:  %s\n' "$PM_OS_BIN/pm-os"
+      case ":$PATH:" in
+        *":$PM_OS_BIN:"*) ;;
+        *) printf 'Add it to PATH:  export PATH="%s:$PATH"\n' "$PM_OS_BIN" ;;
+      esac
+    fi
+  fi
+fi
+
 if [[ "$CHECK_ONLY" -eq 0 ]]; then
   printf '\nInstalled %s entries into both ~/.claude/skills and ~/.codex/skills.\n' "${#SKILL_SOURCES[@]}"
   printf 'Workspace: %s\nSkills:    %s\n' "$WORKSPACE_ROOT" "$SKILLS_DIR"

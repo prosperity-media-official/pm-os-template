@@ -97,6 +97,41 @@ foreach ($runtime in @('.claude', '.codex')) {
     }
 }
 
+# The pm-os CLI on PATH. Bootstrap only: the CLI lives in pm-skills and is updated with it.
+# A .cmd shim rather than a symlink -- cmd.exe cannot run a shebang, and the Python is
+# baked in because `python3` on Windows is usually the Store alias, which exits 49.
+$pmOsScript = Join-Path $SkillsDir '_shared\scripts\pm_os.py'
+if (Test-Path -LiteralPath $pmOsScript) {
+    $pmOsBin = Join-Path $HOME '.local\bin'
+    $pmOsShim = Join-Path $pmOsBin 'pm-os.cmd'
+    if ($CheckOnly) {
+        if (-not (Test-Path -LiteralPath $pmOsShim)) {
+            Write-Warning "pm-os is not installed in $pmOsBin; rerun setup.ps1 without -CheckOnly."
+        }
+    } else {
+        $launcher = $null
+        foreach ($candidate in @(@('py', '-3'), @('python'), @('python3'))) {
+            $found = Get-Command $candidate[0] -ErrorAction SilentlyContinue
+            if (-not $found) { continue }
+            $probe = & $candidate[0] @($candidate[1..($candidate.Length - 1)] + @('-c', 'print(1)')) 2>$null
+            if ($LASTEXITCODE -eq 0 -and $probe) { $launcher = ($candidate -join ' '); break }
+        }
+        if (-not $launcher) {
+            Write-Warning 'No working Python found; skipping the pm-os shim.'
+        } else {
+            New-Item -ItemType Directory -Path $pmOsBin -Force | Out-Null
+            Set-Content -LiteralPath $pmOsShim -Encoding ASCII -Value @(
+                '@echo off',
+                "$launcher `"$pmOsScript`" %*"
+            )
+            Write-Host "pm-os CLI:  $pmOsShim"
+            if (($env:PATH -split ';') -notcontains $pmOsBin) {
+                Write-Host "Add it to PATH:  setx PATH `"$pmOsBin;%PATH%`""
+            }
+        }
+    }
+}
+
 if ($CheckOnly) {
     Write-Host "OK: $($sources.Count) skill entries verified in both runtimes."
 } else {
