@@ -104,6 +104,8 @@ State the proposed destination before creating a substantial file.
 | Compiled knowledge | `knowledge/wiki/<domain>/` |
 | Nothing else fits | `misc/` inside the most-specific parent; never top-level `_misc/` |
 
+Every custom output gets its own `YYYY-MM-DD-<slug>/` folder with one front-door `.md` at the root (what was done, findings, a Files list) and everything else under `raw/`, `data/`, `scripts/` or `assets/`. Name the front-door file in the reply. Full rule: `.claude/rules/output-rules.md`; it applies here and in every client repo.
+
 ## Naming and dates
 
 - Use ISO 8601 everywhere: `YYYY-MM-DD` in filenames and document bodies.
